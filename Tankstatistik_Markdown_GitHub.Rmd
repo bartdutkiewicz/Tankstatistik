@@ -2,9 +2,7 @@
 title: "Tankstatistik"
 author: "Bart R. Dutkiewicz"
 date: "25.03.2025"
-output: 
-  html_document: 
-    keep_md: true
+output: github_document
 code_download: true
 ---
 

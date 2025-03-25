@@ -6,7 +6,7 @@
 # B.R.Dutkiewicz                                     #
 #----------------------------------------------------#
 
-# Letzte wesentliche Änderung: 24.03.2025
+# Letzte wesentliche Änderung: 25.03.2025
 # Verwendete Version: R 4.4.3
 
 # Arbeitsverzeichnis festgelegt?
@@ -53,7 +53,7 @@ df.raw[1, 7] <- df.raw[1, 8]/df.raw[1, 6]
 
 
 ### Aufbereitung Teil 1
-# Erzeugen einer Datumsvariable und Einfügen dieser 
+# Erzeugen einer Datumsvariable und Einfügen dieser
 # in die Tabelle.
 Datum <- paste(df.raw$Jahr,"-",df.raw$Monat,"-",df.raw$Tag, sep="")
 df.raw$Datum <- as.Date(Datum)
