@@ -52,7 +52,7 @@ df.raw[1, 7] <- df.raw[1, 8]/df.raw[1, 6]
 
 
 
-### Aufbereitung Teil 2
+### Aufbereitung Teil 1
 # Erzeugen einer Datumsvariable und Einfügen dieser 
 # in die Tabelle.
 Datum <- paste(df.raw$Jahr,"-",df.raw$Monat,"-",df.raw$Tag, sep="")
@@ -93,12 +93,7 @@ for (i in 76:2){
 
 
 ### Aufbereitung Teil 2
-# Format
-# Tag und Monat als Ganzzahlen speichern
-df.raw$Tag <- as.integer(df.raw$Tag)
-df.raw$Monat <- as.integer(df.raw$Monat)
-
-# Bereinigung Arbeitsumgebung
+## Bereinigung Arbeitsumgebung
 # Entfernen aller ab hier unnötigen Objekte
 rm(df.raw.2019, Mittel.a.2019, Datum, i, Tage)
 
@@ -119,7 +114,15 @@ df.raw$Liter.Tag <- df.raw$Liter / df.raw$Tage
 # Euro je Tag
 df.raw$Euro.Tag <- df.raw$Euro / df.raw$Tage
 
-# Runden aller Spalten auf jeweils sinnvolle Dezimalstellen
+
+## Format
+# Tag und Monat als Ganzzahlen speichern
+df.raw$Tag <- as.integer(df.raw$Tag)
+df.raw$Monat <- as.integer(df.raw$Monat)
+
+
+### Aufbereitung Teil 3
+# Runden aller Spalten für einheitliche Anzahl an Nachkommastellen
 df.raw$km <- round(df.raw$km)
 df.raw$km_gesamt <- round(df.raw$km_gesamt)
 df.raw$Liter.km <- round(df.raw$Liter.km, 4)
@@ -131,7 +134,7 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 
 
 #--------------------#
-# Versionen erzeugen #----
+# Varianten erzeugen #----
 #--------------------#
 
 # Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
@@ -652,7 +655,6 @@ Abb.Liter.100km
 
 
 # TBD: Kilometer je Tag und zeitlicher Abstand zur nächsten Betankung
-
 
 
 # TBD: Reichweite je Tank + Farbskala Abstand je Betankung

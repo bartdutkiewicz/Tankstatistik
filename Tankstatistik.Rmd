@@ -1,8 +1,10 @@
 ---
 title: "Tankstatistik"
 author: "Bart R. Dutkiewicz"
-date: "31.01.2025"
-output: html_document
+date: "25.03.2025"
+output: 
+  html_document: 
+    keep_md: true
 code_download: true
 ---
 
@@ -46,13 +48,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In diesem Dokument wird die Tankstatistik eines Toyota Corolla Bj. 1998 seit 2014 fortlaufend ausgewertet. Das Auto wird durch den Urheber dieser Auswertung überwiegend innerhalb der Region Stuttgart bewegt und an städischen (sehr selten: an der Autobahn) Tankstellen der selben Region betankt.
 
-<b>Dieses Dokument und der zugrundeliegende Code ist <i>Work-In-Progress</i> (seit 2015) und das Datum bezieht sich auf die letzte <i>wesentliche</i> Änderung im Code.</b>
+Dieses Dokument und der zugrundeliegende Code ist <b>Work-In-Progress</b> (seit 2015) und das Datum bezieht sich auf die letzte <i>wesentliche</i> Änderung im Code. <b>Der Datensatz wird laufend ergänzt.</b> Die verwendete Version von R ist 4.4.3.
 
-<b>Der Datensatz wird laufend ergänzt.</b>
 
-<b>Die Verwendete Version von R ist 4.4.3</b>
-
-Bei dem Auto handelt es sich um:
+<b>Bei dem Auto handelt es sich um:</b>
 
 -   Hersteller: Toyota
 -   Modell: Corolla
@@ -65,8 +64,8 @@ Bei dem Auto handelt es sich um:
 -   Max. Umdrehungen: 6000U/min
 -   Höchstgeschw.: 195km/h
 
-Folgende Daten werden anhand der Tankquittungen und Notizen/Photos auf einem 
-Mobiltelefon (Kilometerstände) erfasst:
+<b>Folgende Daten werden anhand der Tankquittungen und Notizen/Photos auf einem 
+Mobiltelefon (Kilometerstände) erfasst:</b>
 
 -   Datum
 -   Uhrzeit
@@ -77,48 +76,52 @@ Mobiltelefon (Kilometerstände) erfasst:
 -   Kilometerstand
 -   Anmerkungen zu Rabatten an der Kasse, Ungenauigkeiten etc. (nicht abgebildet)
 
-Die folgende Analyse teilt sich in folgende Abschnitte (Tabs) auf:
+<b>Die folgende Analyse teilt sich in folgende Abschnitte (Tabs) auf:</b>
 
 -   <u>Datenaufbereitung:</u> die Rohdaten werden eingelesen und zur weiteren Verarbeitung vorbereitet. Lücken im Datensatz werden durch Schätzung auf Grundlage benachbarter Werte und durch Rückrechnung aufgefüllt. Zudem werden einige Quotienten berechnet.
 -   <u>Gesamtzeitraum:</u> es werden kumulierte Summen, arithmetrische Mittel und Mediane (wo aussagekräftig) über den gesamten Zeitraum berechnet und letzere beide miteinander verglichen.
 -   <u>Jährliche Auswertung:</u> selbiges für die Einzeljahre.
 -   <u>Abbildungen:</u> für einige Variablen werden die zeitlichen Verläufe mit allen Beobachtungen abgebildet. Zudem werden die Jahressummen und -mittelwerte abgebildet. Bei letzeren werden die beiden Mittel für jedes Jahr gegenübergestellt.
 -   <u>Data Story.</u>
--   <u>Quelltexte und Verweise.</u>
+-   <u>Alle Quelltexte, Dateien und Lizenz</u>
 
-Die Ergebnisse werden in den Übersichten nicht interpretiert. Hierzu ist wurde die Data Story erstellt.
+<b> Hinweise:</b>
+
+-   Die Datenaufbereitung und -auswertung erfolgt ausschließlich mithilfe der R-Basispakete. Dies war eine Entscheidung aus autodidaktischen Gründen und wird so beibehalten. Für Abbildungen wird tidyverse verwendet.
+-   Die Ergebnisse werden in den Übersichten nicht interpretiert. Hierzu ist wurde die Data Story erstellt.
+-   In diesem Markdown-Dokument ist das Skript nur Teilweise einsehbar. Vollständige Quelltexte aller Varianten sind im Tab "Alle Quelltexte und Lizenz" verlinkt.
 
 ------------------------------------------------------------------------
 
 ### Datenaufbereitung
 
 ```{r Einlesen des Datensatzes, echo=FALSE}
-Tankstatistik.raw <- read.table("Tankstatistik_raw.txt",
-                                col.names=c("Tag", "Monat", "Jahr", "Stunde",
-                                            "Minute", "Liter","Euro_Liter", "Euro",
-                                            "km", "km_gesamt", "Anmerkung"),
-                                header=TRUE, sep = "", dec = ",", skip = 3, fill = TRUE)
-Tankstatistik.raw <- Tankstatistik.raw[, -11]
+df.raw <- read.table("Input_Data\\Tankstatistik_raw.txt",
+                     col.names=c("Tag", "Monat", "Jahr", "Stunde",
+                                 "Minute", "Liter","Euro_Liter", "Euro",
+                                 "km", "km_gesamt", "Anmerkung"),
+                     header=TRUE, sep = "", dec = ",", skip = 3, fill = TRUE)
+df.raw <- df.raw[, -11]
 ```
 
 #### Der Rohdatensatz
 
 ```{r Ausgabe Rohdaten, echo=FALSE}
-print(Tankstatistik.raw)
+print(df.raw)
 ```
 
 Es ist zu sehen, dass der Datensatz aufgrund von verlorenen oder nicht-erhobenen Daten lückenhaft ist
 
-#### Datenrekonstruktion, Teil 1
+#### Rekonstruktion, Teil 1
 
 Im folgenden werden Tag und Monat durch Annahme rekonstruiert und der Literpreis berechnet:
 
 ```{r Rekonstruktion Teil 1}
-## Rekonstruktion von [1, 1]; [1, 2] (Tag und Monat)
-Tankstatistik.raw[1, 1] <- 20; Tankstatistik.raw[1, 2] <- 6
+# Rekonstruktion von [1, 1]; [1, 2] (Tag und Monat)
+df.raw[1, 1] <- 20; df.raw[1, 2] <- 6
 
-## Rekonstruktion von [1, 7] (Literpreis)
-Tankstatistik.raw[1, 7] <- Tankstatistik.raw[1, 8]/Tankstatistik.raw[1, 6]
+# Rekonstruktion von [1, 7] (Literpreis)
+df.raw[1, 7] <- df.raw[1, 8]/df.raw[1, 6]
 ```
 
 #### Aufbereitung, Teil 1
@@ -128,12 +131,12 @@ Im Folgenden werden Tag, Monat, Jahr zu einer Datumsvariable zusammengefasst und
 ```{r Aufbereitung Zeit}
 # Erzeugen einer Datumsvariable und Einfügen dieser 
 # in die Tabelle.
-Datum <- paste(Tankstatistik.raw$Jahr,"-",Tankstatistik.raw$Monat,"-",Tankstatistik.raw$Tag, sep="")
-Tankstatistik.raw$Datum <- as.Date(Datum)
+Datum <- paste(df.raw$Jahr,"-",df.raw$Monat,"-",df.raw$Tag, sep="")
+df.raw$Datum <- as.Date(Datum)
 
 # Berechnen der vergangenen Tage zwischen zwei Betankungen
-Tage <- as.integer(diff(Tankstatistik.raw$Datum))
-Tankstatistik.raw$Tage <- c(Tage, NA)
+Tage <- as.integer(diff(df.raw$Datum))
+df.raw$Tage <- c(Tage, NA)
 ```
 
 #### Datenrekonstruktion, Teil 2
@@ -143,19 +146,21 @@ Für das Jahr 2018 sind einige Beobachtungen der mit einer Tankfüllung zurückg
 ```{r Rekonstruktion Teil 2}
 ## Rekonstruktion von [58, 9] bis [66, 9] (Kilometer je Tankfüllung in 2018)
 # Durchschnittliche Kilometer am Tag 2019
-Tankstatistik.raw.2019 <- subset(Tankstatistik.raw, Jahr == "2019")
-Tankstatistik.raw.2019 <- Tankstatistik.raw.2019[,c(9,12)]
-Mittel.a.2019 <- lapply(Tankstatistik.raw.2019, function(x) mean(x))
+df.raw.2019 <- subset(df.raw, Jahr == "2019")
+df.raw.2019 <- df.raw.2019[, c(9, 12)]
+Mittel.a.2019 <- lapply(df.raw.2019, function(x) mean(x))
 Mittel.a.2019$km.Tag <- (Mittel.a.2019$km/Mittel.a.2019$Tage)
-Tankstatistik.raw[58, 9] <- Tankstatistik.raw[58,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[59, 9] <- Tankstatistik.raw[59,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[60, 9] <- Tankstatistik.raw[60,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[61, 9] <- Tankstatistik.raw[61,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[62, 9] <- Tankstatistik.raw[62,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[63, 9] <- Tankstatistik.raw[63,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[64, 9] <- Tankstatistik.raw[64,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[65, 9] <- Tankstatistik.raw[65,12] * Mittel.a.2019$km.Tag
-Tankstatistik.raw[66, 9] <- Tankstatistik.raw[66,12] * Mittel.a.2019$km.Tag
+
+# Rückrechnung
+df.raw[58, 9] <- df.raw[58, 12] * Mittel.a.2019$km.Tag
+df.raw[59, 9] <- df.raw[59, 12] * Mittel.a.2019$km.Tag
+df.raw[60, 9] <- df.raw[60, 12] * Mittel.a.2019$km.Tag
+df.raw[61, 9] <- df.raw[61, 12] * Mittel.a.2019$km.Tag
+df.raw[62, 9] <- df.raw[62, 12] * Mittel.a.2019$km.Tag
+df.raw[63, 9] <- df.raw[63, 12] * Mittel.a.2019$km.Tag
+df.raw[64, 9] <- df.raw[64, 12] * Mittel.a.2019$km.Tag
+df.raw[65, 9] <- df.raw[65, 12] * Mittel.a.2019$km.Tag
+df.raw[66, 9] <- df.raw[66, 12] * Mittel.a.2019$km.Tag
 ```
 
 #### Datenrekonstruktion, Teil 3
@@ -163,99 +168,120 @@ Tankstatistik.raw[66, 9] <- Tankstatistik.raw[66,12] * Mittel.a.2019$km.Tag
 Der Gesamtkilimeterstand wurde bis einschließlich 2019 nicht erhoben und wird im Folgenden anhand der gefahrenen Kilometer je Tankfüllung rückberechnet
 
 ```{r Rekonstruktion Teil 3}
-## Rekonstruktion von [1, 10] bis [75, 10] (Gesamtkilometerstand)
+# Rekonstruktion von [1, 10] bis [75, 10] (Gesamtkilometerstand)
 for (i in 76:2){
-  Tankstatistik.raw[i-1, 10] <- Tankstatistik.raw[i, 10] - Tankstatistik.raw[i, 9]
+  df.raw[i-1, 10] <- df.raw[i, 10] - df.raw[i, 9]
 }
 ```
 
 #### Aufbereitung, Teil 2
 
-Die Rekonstruktion ist an dieser Stelle abgeschlossen, weshalb der rekonstruierte Datensatz gespeichert wird. Des weiteren werden überflüssige Objekte gelöscht. <b>Hierzu gehört auch die jüngste Beobachtung, die noch keine zurückgelegten Kilometer enthält.</b>
+Die Rekonstruktion ist an dieser Stelle abgeschlossen.
+Im Folgenden werden einige Hilfsobjekte aus dem Speicher entfernt, zwei Datenformate geändert und Quotienten gebildet.
 
 ```{r Aufbereitung Teil 2}
-## Bereinigung
-# Entfernen der, im Folgenden noch nicht verwedeten Uhrzeitvariablen
-# sowie der unvollständigen letzten Beobachtung
-n <- nrow(Tankstatistik.raw)
-Tankstatistik.raw <- Tankstatistik.raw[-n ,-c(4,5)]
-
-# Tag und Monat als Ganzzahlen speichern
-Tankstatistik.raw$Tag <- as.integer(Tankstatistik.raw$Tag)
-Tankstatistik.raw$Monat <- as.integer(Tankstatistik.raw$Monat)
-
-# Weiterarbeit mit umbenannten rekonstruierten Datensatz
-Tankstatistik <- Tankstatistik.raw
-
+## Bereinigung Arbeitsumgebung
 # Entfernen aller ab hier unnötigen Objekte
-rm(Tankstatistik.raw, Tankstatistik.raw.2019, Mittel.a.2019, Datum, i, n, Tage)
+rm(df.raw.2019, Mittel.a.2019, Datum, i, Tage)
+
 
 ## Bilden einiger Quotienten
 # Liter je km
-Tankstatistik$Liter.km <- Tankstatistik$Liter / Tankstatistik$km
+df.raw$Liter.km <- df.raw$Liter / df.raw$km
 
 # Euro je km
-Tankstatistik$Euro.km <- Tankstatistik$Euro / Tankstatistik$km
+df.raw$Euro.km <- df.raw$Euro / df.raw$km
 
 # Kilometer je Tag
-Tankstatistik$km.Tag <- Tankstatistik$km / Tankstatistik$Tage
+df.raw$km.Tag <- df.raw$km / df.raw$Tage
 
 # Liter je Tag
-Tankstatistik$Liter.Tag <- Tankstatistik$Liter / Tankstatistik$Tage
+df.raw$Liter.Tag <- df.raw$Liter / df.raw$Tage
 
 # Euro je Tag
-Tankstatistik$Euro.Tag <- Tankstatistik$Euro / Tankstatistik$Tage
+df.raw$Euro.Tag <- df.raw$Euro / df.raw$Tage
+
+
+## Format
+# Tag und Monat als Ganzzahlen speichern
+df.raw$Tag <- as.integer(df.raw$Tag)
+df.raw$Monat <- as.integer(df.raw$Monat)
+
+# Runden aller Spalten auf jeweils sinnvolle Dezimalstellen
+df.raw$km <- round(df.raw$km)
+df.raw$km_gesamt <- round(df.raw$km_gesamt)
+df.raw$Liter.km <- round(df.raw$Liter.km, 4)
+df.raw$Euro.km <- round(df.raw$Euro.km, 4)
+df.raw$km.Tag <- round(df.raw$km.Tag, 3)
+df.raw$Liter.Tag <- round(df.raw$Liter.Tag, 4)
+df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 ```
 
-#### Runden aller Spalten auf jeweils sinnvolle Dezimalstellen
+#### Aufbereitung, Teil 3
+
+Im Folgenden werden alle Spalten gerundet.
 
 Für die weitere Auswertung ist dies nicht zwingend nötig, aber das Einlesen
-der exportierten Statistik in eine SQL-Datenbank wird durch eine uneinheitliche 
-Anzahl von Nachkommastellen sehr erschwert.
+des exportierten, aufbereiteten Datensatzes in eine SQL-Datenbank wird durch eine uneinheitliche 
+Anzahl von Nachkommastellen sehr erschwert (erzwingt unexaktes und speicherineffizentes Zahlenformat).
 
 Um dem zu begegnen, werden alle Spalten gerundet. Einige Distanz- und Kostenspalten
 behalten dabei "ungewohnt" viele Nachkommastellen, weil gröber gerundete Werte zu oft gleich zueinander sind.
 
 ```{r Ausgabe Runden der Rekonstruktion}
-Tankstatistik$km <- round(Tankstatistik$km)
-Tankstatistik$km_gesamt <- round(Tankstatistik$km_gesamt)
-Tankstatistik$Liter.km <- round(Tankstatistik$Liter.km, 4)
-Tankstatistik$Euro.km <- round(Tankstatistik$Euro.km, 4)
-Tankstatistik$km.Tag <- round(Tankstatistik$km.Tag, 3)
-Tankstatistik$Liter.Tag <- round(Tankstatistik$Liter.Tag, 4)
-Tankstatistik$Euro.Tag <- round(Tankstatistik$Euro.Tag, 4)
+# Runden aller Spalten für einheitliche Anzahl an Nachkommastellen
+df.raw$km <- round(df.raw$km)
+df.raw$km_gesamt <- round(df.raw$km_gesamt)
+df.raw$Liter.km <- round(df.raw$Liter.km, 4)
+df.raw$Euro.km <- round(df.raw$Euro.km, 4)
+df.raw$km.Tag <- round(df.raw$km.Tag, 3)
+df.raw$Liter.Tag <- round(df.raw$Liter.Tag, 4)
+df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 ```
 
 #### Rekonstruierter Datensatz
 
 ```{r Ausgabe rekonstruierter Datensatz, echo=FALSE}
-print(Tankstatistik)
+print(df.raw)
 ```
 
 #### Datenstruktur des rekonstruierten Datensatzes
 
 ```{r Ausgabe Datensatzstruktur}
-str(Tankstatistik)
+str(df.raw)
 ```
+
+#### Datensatzvarianten erzeugen
+
+Trennung des Datensatzes in eine Exportvariante und eine Auswertungsvariante.
+Die unvollständige jüngste Beobachtung wird für die weitere Auswertung nicht berücksichtigt und aus dem Auswertungsdatensatz entfernt.
+
+```{r Datensatzvarianten}
+# Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
+df.export <- df.raw
+
+# Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
+df.raw <- df.raw[-nrow(df.raw), ]
+df <- df.raw
+rm(df.raw)
+```
+
 
 #### Berechnung der Summen und Mittel über den Gesamtzeitraum und die Einzeljahre
 
-Der Code zur Auswertung wird hier aufgrund großer Länge und Repetitivität ausgelassen und im zugrundliegenden Rmarkdown-Skript einsehbar.
+Der Code zur Auswertung wird hier aufgrund großer Länge und Repetitivität ausgelassen und ist im grundliegenden Skript auf GitHub und Posit.Cloud zu Verfügung gestellt.
 
 ```{r Auswertung, echo = FALSE}
-#---------------------------------------#
-# Auswertung über den gesamten Zeitraum #----
-#---------------------------------------#
-
-
+### Gesamter Zeitraum
 ## Summen
 # Gesamtverbrauch an Benzin in Litern
 # Gesamtausgaben in Euro
 # Insgesamt gefahrene Kilomenter
 # Vergangene Tage seit Beginn der Erhebung
-Summen <- unlist(lapply(Tankstatistik[c(4, 6, 7, 10)], function(x) sum(x)))
+Summen <- unlist(lapply(df[c(6, 8, 9, 12)], function(x) sum(x)))
+
 # Anzahl der Betankungen
-Summen <- c(Summen, dim(Tankstatistik)[1])
+Summen <- c(Summen, dim(df)[1])
 names(Summen) <- c("Liter", "Euro", "km", "Tage", "Betankungen")
 
 
@@ -265,7 +291,7 @@ names(Summen) <- c("Liter", "Euro", "km", "Tage", "Betankungen")
 # Durchschnittliche Ausgaben in Euro/Kilometer
 # Durchschnittlich gefahrene Strecke in Kilometern
 # Durchschnittlich vergangenene Zeit zwischen zwei Betankungen in Tagen
-Mittel.a <- lapply(Tankstatistik[c(4:7, 10)], function(x) mean(x))
+Mittel.a <- lapply(df[c(6:9, 12)], function(x) mean(x))
 
 # Durchschnittsverbrauch in Liter/km
 Mittel.a$Liter.km <- (Mittel.a$Liter/Mittel.a$km)
@@ -292,7 +318,7 @@ Mittel.a <- unlist(Mittel.a)
 # Durchschnittliche Ausgaben in Euro/Kilometer
 # Durchschnittlich gefahrene Strecke in Kilometern
 # Durchschnittlich vergangenene Zeit zwischen zwei Betankungen in Tagen
-Mittel.m <- lapply(Tankstatistik[c(4:7, 10)], function(x) median(x))
+Mittel.m <- lapply(df[c(6:9, 12)], function(x) median(x))
 
 # Durchschnittsverbrauch in Liter/km
 Mittel.m$Liter.km <- (Mittel.m$Liter/Mittel.m$km)
@@ -314,33 +340,35 @@ Mittel.m <- unlist(Mittel.m)
 
 ## Vergleich von Median und arithmetrischem Mittel
 # Differenzen der Mittel für Gesamtzeitraum, absolut
-Mittel.diff <- Mittel.m - Mittel.a
+Mittel.diff.abs <- Mittel.m - Mittel.a
 
 # Differenzen der Mittel für Gesamtzeitraum, relativ in Prozent
 Mittel.diff.rel <- ((Mittel.m - Mittel.a)/Mittel.m) * 100
 
 # Tabelle bilden
-Mittel <- data.frame(cbind(Mittel.a, Mittel.m, Mittel.diff, Mittel.diff.rel))
+Mittel <- data.frame(cbind(Mittel.a, Mittel.m, Mittel.diff.abs, Mittel.diff.rel))
+
+
+## Bereinigung Arbeitsumgebung
+# Entfernen aller ab hier unnötigen Objekte
+rm(Mittel.a, Mittel.m, Mittel.diff.abs, Mittel.diff.rel)
 
 
 
-#----------------------#
-# Jährliche Auswertung #----
-#----------------------#
-
-# Aufteilen nach Jahr
-Tankstatistik.Jahr <- split(Tankstatistik, Tankstatistik$Jahr)
+### Jährliche Auswertung
+## Aufteilen nach Jahr
+df.Jahr <- split(df, df$Jahr)
 
 
 ## Summen
 # Gesamtverbrauch an Benzin in Litern
-Gesamtverbrauch.Jahr <- unlist(lapply(Tankstatistik.Jahr, function(x) sum(x[, 4])))
+Gesamtverbrauch.Jahr <- unlist(lapply(df.Jahr, function(x) sum(x[, 6])))
 # Gesamtausgaben in Euro
-Gesamtausgaben.Jahr <- unlist(lapply(Tankstatistik.Jahr, function(x) sum(x[, 6])))
+Gesamtausgaben.Jahr <- unlist(lapply(df.Jahr, function(x) sum(x[, 8])))
 # Insgesamt gefahrene Kilomenter
-Kilometer.Jahr <- unlist(lapply(Tankstatistik.Jahr, function(x) sum(x[, 7])))
+Kilometer.Jahr <- unlist(lapply(df.Jahr, function(x) sum(x[, 9])))
 # Anzahl der Betankungen
-Betankungen.Jahr <- unlist(lapply(Tankstatistik.Jahr, function(x) dim(x)[1]))
+Betankungen.Jahr <- unlist(lapply(df.Jahr, function(x) dim(x)[1]))
 
 # Tabelle bilden
 Summen.Jahr <- data.frame(cbind(Gesamtverbrauch.Jahr,
@@ -349,28 +377,33 @@ Summen.Jahr <- data.frame(cbind(Gesamtverbrauch.Jahr,
                                 Betankungen.Jahr))
 
 
+## Bereinigung Arbeitsumgebung
+# Entfernen aller ab hier unnötigen Objekte
+rm(Gesamtverbrauch.Jahr, Gesamtausgaben.Jahr, Kilometer.Jahr, Betankungen.Jahr)
+
+
 ## Mittel und Quotienten (arithmetrisch)
 # Durchschnittlich getanktes Benzin in Litern je Jahr
-Liter.Tank.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) mean(x[, 4])))
+Liter.Tank.Jahr.a <- unlist(lapply(df.Jahr, function(x) mean(x[, 6])))
 # Durschschnittspreis in Euro/Liter je Jahr
-Literpreis.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) mean(x[, 5])))
+Literpreis.Jahr.a <- unlist(lapply(df.Jahr, function(x) mean(x[, 7])))
 # Durchschnittliche Ausgaben in Euro je Jahr
-Euro.Tank.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) mean(x[, 6])))
+Euro.Tank.Jahr.a <- unlist(lapply(df.Jahr, function(x) mean(x[, 8])))
 # Durchschnittlich gefahrene Strecke in Kilometern je Jahr
-KM.Tank.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) mean(x[, 7])))
+KM.Tank.Jahr.a <- unlist(lapply(df.Jahr, function(x) mean(x[, 9])))
 # Durchschnittlich vergangenene Zeit zwischen zwei Betankungen in Tagen
-Tage.Tank.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) mean(x[, 10])))
+Tage.Tank.Jahr.a <- unlist(lapply(df.Jahr, function(x) mean(x[, 12])))
 
 # Durchschnittsverbrauch in Liter/km
-Liter.KM.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) (mean(x[, 4])/mean(x[, 7]))))
+Liter.KM.Jahr.a <- unlist(lapply(df.Jahr, function(x) (mean(x[, 6])/mean(x[, 9]))))
 # Durchschnittskosten in Euro/km
-Euro.KM.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) (mean(x[, 6])/mean(x[, 7]))))
+Euro.KM.Jahr.a <- unlist(lapply(df.Jahr, function(x) (mean(x[, 8])/mean(x[, 9]))))
 # Durchschnittliche Kilometer am Tag
-KM.Tag.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) (mean(x[, 6])/mean(x[, 10]))))
+KM.Tag.Jahr.a <- unlist(lapply(df.Jahr, function(x) (mean(x[, 8])/mean(x[, 12]))))
 # Durchschnittlicher Benzinverbrauch in l/Tag
-Liter.Tag.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) (mean(x[, 4])/mean(x[, 10]))))
+Liter.Tag.Jahr.a <- unlist(lapply(df.Jahr, function(x) (mean(x[, 6])/mean(x[, 12]))))
 # Durchschnittliche Kosten in Euro/Tag
-Euro.Tag.Jahr.a <- unlist(lapply(Tankstatistik.Jahr, function(x) (mean(x[, 6])/mean(x[, 10]))))
+Euro.Tag.Jahr.a <- unlist(lapply(df.Jahr, function(x) (mean(x[, 8])/mean(x[, 12]))))
 
 # Tabelle bilden
 Mittel.Jahr.a <- data.frame(cbind(Liter.Tank.Jahr.a,
@@ -384,29 +417,42 @@ Mittel.Jahr.a <- data.frame(cbind(Liter.Tank.Jahr.a,
                                   Liter.Tag.Jahr.a,
                                   Euro.Tag.Jahr.a))
 
+## Bereinigung Arbeitsumgebung
+# Entfernen aller ab hier unnötigen Objekte
+rm(Liter.Tank.Jahr.a,
+   Literpreis.Jahr.a,
+   Euro.Tank.Jahr.a,
+   KM.Tank.Jahr.a,
+   Tage.Tank.Jahr.a,
+   Liter.KM.Jahr.a,
+   Euro.KM.Jahr.a,
+   KM.Tag.Jahr.a,
+   Liter.Tag.Jahr.a,
+   Euro.Tag.Jahr.a)
+
 
 ## Mittel und Quotienten (median)
 # Durchschnittlich getanktes Benzin in Litern je Jahr
-Liter.Tank.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) median(x[, 4])))
+Liter.Tank.Jahr.m <- unlist(lapply(df.Jahr, function(x) median(x[, 6])))
 # Durschschnittspreis in Euro/Liter je Jahr
-Literpreis.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) median(x[, 5])))
+Literpreis.Jahr.m <- unlist(lapply(df.Jahr, function(x) median(x[, 7])))
 # Durchschnittliche Ausgaben in Euro je Jahr
-Euro.Tank.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) median(x[, 6])))
+Euro.Tank.Jahr.m <- unlist(lapply(df.Jahr, function(x) median(x[, 8])))
 # Durchschnittlich gefahrene Strecke in Kilometern je Jahr
-KM.Tank.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) median(x[, 7])))
+KM.Tank.Jahr.m <- unlist(lapply(df.Jahr, function(x) median(x[, 9])))
 # Durchschnittlich vergangenene Zeit zwischen zwei Betankungen in Tagen
-Tage.Tank.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) median(x[, 10])))
+Tage.Tank.Jahr.m <- unlist(lapply(df.Jahr, function(x) median(x[, 12])))
 
 # Durchschnittsverbrauch in Liter/km
-Liter.KM.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) (median(x[, 4])/median(x[, 7]))))
+Liter.KM.Jahr.m <- unlist(lapply(df.Jahr, function(x) (median(x[, 6])/median(x[, 9]))))
 # Durchschnittskosten in Euro/km
-Euro.KM.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) (median(x[, 6])/median(x[, 7]))))
+Euro.KM.Jahr.m <- unlist(lapply(df.Jahr, function(x) (median(x[, 8])/median(x[, 9]))))
 # Durchschnittliche Kilometer am Tag
-KM.Tag.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) (median(x[, 6])/median(x[, 10]))))
+KM.Tag.Jahr.m <- unlist(lapply(df.Jahr, function(x) (median(x[, 8])/median(x[, 12]))))
 # Durchschnittlicher Benzinverbrauch in l/Tag
-Liter.Tag.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) (median(x[, 4])/median(x[, 10]))))
+Liter.Tag.Jahr.m <- unlist(lapply(df.Jahr, function(x) (median(x[, 6])/median(x[, 12]))))
 # Durchschnittliche Kosten in Euro/Tag
-Euro.Tag.Jahr.m <- unlist(lapply(Tankstatistik.Jahr, function(x) (median(x[, 6])/median(x[, 10]))))
+Euro.Tag.Jahr.m <- unlist(lapply(df.Jahr, function(x) (median(x[, 8])/median(x[, 12]))))
 
 # Tabelle bilden
 Mittel.Jahr.m <- data.frame(cbind(Liter.Tank.Jahr.m,
@@ -421,25 +467,9 @@ Mittel.Jahr.m <- data.frame(cbind(Liter.Tank.Jahr.m,
                                   Euro.Tag.Jahr.m))
 
 
-## Vergleich von Median und arithmetrischem Mittel
-# Differenzen der Mittel für Einzeljahre, absolut
-Mittel.diff.Jahr <- Mittel.Jahr.m - Mittel.Jahr.a
-
-# Differenzen der Mittel für Einzeljahre, relativ in Prozent
-Mittel.diff.Jahr.rel <- ((Mittel.Jahr.m - Mittel.Jahr.a)/Mittel.Jahr.m) * 100
-
-## Entfernen aller ab hier unnötigen Objekte
-rm(Liter.Tank.Jahr.a,
-   Literpreis.Jahr.a,
-   Euro.Tank.Jahr.a,
-   KM.Tank.Jahr.a,
-   Tage.Tank.Jahr.a,
-   Liter.KM.Jahr.a,
-   Euro.KM.Jahr.a,
-   KM.Tag.Jahr.a,
-   Liter.Tag.Jahr.a,
-   Euro.Tag.Jahr.a,
-   Liter.Tank.Jahr.m,
+## Bereinigung Arbeitsumgebung
+# Entfernen aller ab hier unnötigen Objekte
+rm(Liter.Tank.Jahr.m,
    Literpreis.Jahr.m,
    Euro.Tank.Jahr.m,
    KM.Tank.Jahr.m,
@@ -448,11 +478,16 @@ rm(Liter.Tank.Jahr.a,
    Euro.KM.Jahr.m,
    KM.Tag.Jahr.m,
    Liter.Tag.Jahr.m,
-   Euro.Tag.Jahr.m,
-   Betankungen.Jahr,
-   Gesamtausgaben.Jahr,
-   Gesamtverbrauch.Jahr,
-   Kilometer.Jahr)
+   Euro.Tag.Jahr.m)
+
+
+## Vergleich von Median und arithmetrischem Mittel
+# Differenzen der Mittel für Einzeljahre, absolut
+Mittel.diff.Jahr.abs <- Mittel.Jahr.m - Mittel.Jahr.a
+
+# Differenzen der Mittel für Einzeljahre, relativ in Prozent
+Mittel.diff.Jahr.rel <- ((Mittel.Jahr.m - Mittel.Jahr.a)/Mittel.Jahr.m) * 100
+
 ```
 
 ### Gesamtzeitraum
@@ -522,7 +557,7 @@ knitr::kable(Summen.Jahr, caption = "Jahressummen", digits = 0,
 # Zusammenfassung der Jahresmittelwerte und -quotienten (Arith. Mittel)
 knitr::kable(Mittel.Jahr.a, caption = "Jahresmittel (arithmetrisch)", digits = 2,
              col.names = c("Liter", "Euro/Liter", "Euro", "km", "Tage", "Liter/km",
-                         "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
+                           "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
 ```
 
 #### Mediane
@@ -531,15 +566,15 @@ knitr::kable(Mittel.Jahr.a, caption = "Jahresmittel (arithmetrisch)", digits = 2
 # Zusammenfassung der Jahresmittelwerte und -quotienten (Median)
 knitr::kable(Mittel.Jahr.m, caption = "Jahresmittel (median)", digits = 2,
              col.names = c("Liter", "Euro/Liter", "Euro", "km", "Tage", "Liter/km",
-                         "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
+                           "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
 ```
 
 #### Absolute Differenz zwischen Median (Minuend) und arithmetrischem Mittel (Subtrahend) in den Einzeljahren
 
 ```{r Ausgabe Differenzen von Median und arith. Mittel absolut, echo=FALSE}
-knitr::kable(Mittel.diff.Jahr, caption = "Absolute Differenz Median - Arith. Mittel", digits = 2,
+knitr::kable(Mittel.diff.Jahr.abs, caption = "Absolute Differenz Median - Arith. Mittel", digits = 2,
              col.names = c("Liter", "Euro/Liter", "Euro", "km", "Tage", "Liter/km",
-                         "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
+                           "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
 ```
 
 #### Prozentuale Differenz zwischen Median (Minuend) und arithmetrischem Mittel (Subtrahend) in den Einzeljahren
@@ -547,7 +582,7 @@ knitr::kable(Mittel.diff.Jahr, caption = "Absolute Differenz Median - Arith. Mit
 ```{r Ausgabe Differenzen von Median und arith. Mittel relativ, echo=FALSE}
 knitr::kable(Mittel.diff.Jahr.rel, caption = "Relative Differenz Median - Arith. Mittel in Prozent", digits = 2,
              col.names = c("Liter", "Euro/Liter", "Euro", "km", "Tage", "Liter/km",
-                         "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
+                           "Euro/km", "km/Tag", "Liter/Tag", "Euro/Tag"))
 ```
 
 ### Abbildungen
@@ -568,8 +603,8 @@ library(wesanderson) #Farbpaletten
 Summen.Jahr$Jahr <- as.integer(rownames(Summen.Jahr))
 # Alles auf ganze Zahlen Runden (sonst hässliche Darstellung)
 Summen.Jahr <- round(Summen.Jahr, digits = 0)
-# Tankstatistik als Tibble
-Tankstatistik <- as_tibble(Tankstatistik)
+# Data Frame als Tibble
+df <- as_tibble(df)
 
 # Jahresmittelwerte in brauchbare Form bringen und zusammenführen
 long.Mittel.Jahr.a <- Mittel.Jahr.a
@@ -585,6 +620,11 @@ long.Mittel.Jahr.m$Mittel <- rep("median", nrow(long.Mittel.Jahr.m))
 Mittel.Jahr <- rbind(long.Mittel.Jahr.a, long.Mittel.Jahr.m) #Zusammenführen
 rownames(Mittel.Jahr) <- NULL #Zeilennamen löschen
 Mittel.Jahr <- as_tibble(Mittel.Jahr) #In Tibble umwandeln
+
+
+## Bereinigung Arbeitsumgebung
+# Entfernen aller ab hier unnötigen Objekte
+rm(long.Mittel.Jahr.a, long.Mittel.Jahr.m)
 ```
 
 #### Jahressummen
@@ -719,8 +759,8 @@ Abb.Gesamtausgaben.Jahr
 
 ```{r Abb Liter, echo=FALSE, warning=FALSE}
 # Getankte Liter je Betankung
-Abb.Liter <- ggplot(data = Tankstatistik,
-                        mapping = aes(x = Datum, y = Liter)) +
+Abb.Liter <- ggplot(data = df,
+                    mapping = aes(x = Datum, y = Liter)) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -741,8 +781,8 @@ Abb.Liter
 
 ```{r Abb Literpreise, echo=FALSE, warning=FALSE}
 # Verlauf der Literpreise
-Abb.Literpreise <- ggplot(data = Tankstatistik,
-                      mapping = aes(x = Datum, y = Euro_Liter)) +
+Abb.Literpreise <- ggplot(data = df,
+                          mapping = aes(x = Datum, y = Euro_Liter)) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -750,9 +790,9 @@ Abb.Literpreise <- ggplot(data = Tankstatistik,
   theme(axis.title.y = element_text(face = "bold", size = 15)) +
   theme(axis.text.y = element_text(face = "bold", vjust = 0.3)) +
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 2.5)) +
+                     limits = c(0, 2.2)) +
   labs(x = "Jahr",
-       y = "Euro/Liter",
+       y = "Euro",
        title = "Literpreis für E95") +
   geom_line() +
   geom_point(size = 1)
@@ -761,8 +801,8 @@ Abb.Literpreise
 
 ```{r Abb Kilometer, echo=FALSE, warning=FALSE}
 # Gefahrene Kilometer je Betankung
-Abb.Kilometer <- ggplot(data = Tankstatistik,
-                      mapping = aes(x = Datum, y = km)) +
+Abb.Kilometer <- ggplot(data = df,
+                        mapping = aes(x = Datum, y = km)) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -772,19 +812,19 @@ Abb.Kilometer <- ggplot(data = Tankstatistik,
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0, 1000)) +
   labs(x = "Jahr",
-       y = "Kilometer/Betankung",
+       y = "Kilometer",
        title = "Gefahrene Kilometer je Betankung") +
   geom_line() +
   geom_point(size = 1) +
-  annotate(geom = "text", x = as.Date("2016-04-16"), y = 900,
+  annotate(geom = "text", x = as.Date("2016-04-16") + 10, y = 920,
            label = "Ausreißer, Plausibilität zweifelhaft", hjust = "left")
 Abb.Kilometer
 ```
 
 ```{r Abb Kilometer Liter, echo=FALSE, warning=FALSE}
 # Gefahrene Kilometer je getanktem Liter
-Abb.Kilometer.Liter <- ggplot(data = Tankstatistik,
-                        mapping = aes(x = Datum, y = Liter.km^(-1))) +
+Abb.Kilometer.Liter <- ggplot(data = df,
+                              mapping = aes(x = Datum, y = Liter.km ^ (-1))) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -794,7 +834,7 @@ Abb.Kilometer.Liter <- ggplot(data = Tankstatistik,
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0, 35)) +
   labs(x = "Jahr",
-       y = "Kilometer/Liter",
+       y = "Kilometer",
        title = "Gefahrene Kilometer je getanktem Liter") +
   geom_line() +
   geom_point(size = 1) +
@@ -805,8 +845,8 @@ Abb.Kilometer.Liter
 
 ```{r Abb Liter 100km, echo=FALSE, warning=FALSE}
 # Verbrauchte Liter je 100 Kilometer
-Abb.Liter.100km <- ggplot(data = Tankstatistik,
-                              mapping = aes(x = Datum, y = Liter.km*100)) +
+Abb.Liter.100km <- ggplot(data = df,
+                          mapping = aes(x = Datum, y = Liter.km * 100)) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -816,7 +856,7 @@ Abb.Liter.100km <- ggplot(data = Tankstatistik,
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0, 20)) +
   labs(x = "Jahr",
-       y = "Liter/100km",
+       y = "Liter",
        title = "Verbrauchte Liter je 100 Kilometer") +
   geom_line() +
   geom_point(size = 1) +
@@ -847,12 +887,12 @@ Abb.Liter.Jahr <- ggplot(data = Mittel.Jahr) +
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0, 50)) +
   labs(x = "Jahr",
-       y = "Liter/Betankung",
+       y = "Liter",
        title = "Liter je Betankung") +
   geom_bar(mapping = (aes(x = Jahr, y = Liter.Tank.Jahr, fill = Mittel)),
            stat = "identity",  position = position_dodge()) +
   geom_hline(yintercept = 40, color = "red") +
-  annotate(geom = "text", x = 2015, y = 42, label = "max. Fassungsvermögen", hjust = "center")
+  annotate(geom = "text", x = 2016, y = 42, label = "max. Fassungsvermögen", hjust = "center")
 Abb.Liter.Jahr
 ```
 
@@ -896,7 +936,7 @@ Abb.Euro.Tank.Jahr <- ggplot(data = Mittel.Jahr) +
                      limits = c(0, 100)) +
   labs(x = "Jahr",
        y = "Euro/Betankung",
-       title = "Ausgaben je Betankung") +
+       title = "Ausgabe je Betankung") +
   geom_bar(mapping = (aes(x = Jahr, y = Euro.Tank.Jahr, fill = Mittel)),
            stat = "identity",  position = position_dodge())
 Abb.Euro.Tank.Jahr
@@ -1135,11 +1175,36 @@ Die verbrauchten Liter je Jahr bestätigen dies hingegen nicht, da der große R�
 <<Abb Verbrauch je Jahr>>
 ```
 
-### Quelltexte und Verweise
+### Export
 
-#### R-Projekt online
+Im grundlegenden R-Skript werden folgende Exporte ausgeführt:
 
-Das vollständige Projekt ist Interessierte mit Benutzerkonto bei RStudio.Cloud unter <https://posit.cloud/content/3318758> einseh- und ausführbar.
+-   Der Rekonstruierte Datensatz
+-   Gesamtsummen und -mittel
+-   Jahressummen und -mittel
+-   <b>TBD:</b> SQLite (öffentlich)
+-   <b>TBD:</b> postgreSQL (persönlich)
+
+Diese Exporte und der dazugehörige Code sind kein Teil dieses Dokuments und stehen auf GitHub und Posit.Cloud zur Verfügung.
+
+
+### Alle Quelltexte, Dateien und Lizenz
+
+#### GitHub
+
+Das vollständige Projekt mitsamt aller Quelltexte und Daten (Input/Output) ist unter <https://github.com/bartdutkiewicz/Tankstatistik> zur Verfügung gestellt.
+
+#### Posit.Cloud
+
+Das grundlegende R-Skript und das R-Markdown-Dokument sind auf Posit.Cloud unter <https://posit.cloud/content/3318758> zur Verfügung gestellt (Benutzerkonto erforderlich).
+
+#### RPubs
+
+Dieses R-Markdown-Dokument ist auf RPubs unter <https://rpubs.com/Dutkiewicz/Tankstatistik> zur Verfügung gestellt.
+
+#### Lizenz
+
+Das gesamte Projekt und insbesondere der Datensatz ist mit der [Creative Commons Attribution 4.0 International Public License](https://creativecommons.org/licenses/by/4.0/legalcode.txt) lizenziert.
 
 ------------------------------------------------------------------------
 
