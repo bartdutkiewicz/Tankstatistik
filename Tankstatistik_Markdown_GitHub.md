@@ -3,31 +3,6 @@ Tankstatistik
 Bart R. Dutkiewicz
 25.03.2025
 
-<style type="text/css">
-&#10;body, td {
-  font-size: 14px;
-}
-&#10;pre {
-  font-size: 12px;
-  max-height: 600px;
-  overflow-y: auto;
-}
-&#10;h1, h2, h3, h4, h5, h6{
-  margin-top: 40px;
-  margin-bottom: 10px;
-}
-&#10;code.r{
-  font-size: 12px;
-}
-&#10;.table caption {
-   text-align: center; 
-    font-weight: bold;
-}
-&#10;.table-wrapper {
-  overflow-x: scroll;
-}
-</style>
-
 ## Tank- und Verbrauchsstatistik eines Toyota Corolla Bj. 1998 ab Juni 2014
 
 In diesem Dokument wird die Tankstatistik eines Toyota Corolla Bj. 1998
