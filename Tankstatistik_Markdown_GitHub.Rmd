@@ -6,38 +6,6 @@ output: github_document
 code_download: true
 ---
 
-```{=html}
-<style type="text/css">
-
-body, td {
-  font-size: 14px;
-}
-
-pre {
-  font-size: 12px;
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-h1, h2, h3, h4, h5, h6{
-  margin-top: 40px;
-  margin-bottom: 10px;
-}
-
-code.r{
-  font-size: 12px;
-}
-
-.table caption {
-   text-align: center; 
-    font-weight: bold;
-}
-
-.table-wrapper {
-  overflow-x: scroll;
-}
-</style>
-```
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
