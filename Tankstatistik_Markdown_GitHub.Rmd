@@ -62,11 +62,11 @@ Mobiltelefon (Kilometerstände) erfasst:</b>
 ### Datenaufbereitung
 
 ```{r Einlesen des Datensatzes, echo=FALSE}
-df.raw <- read.table("Input_Data\\Tankstatistik_raw.txt",
+df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
                      col.names=c("Tag", "Monat", "Jahr", "Stunde",
                                  "Minute", "Liter","Euro_Liter", "Euro",
                                  "km", "km_gesamt", "Anmerkung"),
-                     header=TRUE, sep = "", dec = ",", skip = 3, fill = TRUE)
+                     header=TRUE, sep = "", dec = ",", skip = 5, fill = TRUE)
 df.raw <- df.raw[, -11]
 ```
 
