@@ -1,6 +1,8 @@
-Tankstatistik
+Corolla_Betankungen_raw
+B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
 Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
-UT164AEB103030101  
+UT164AEB103030101
+Rohdaten
 Tag	Monat	Jahr	Stunde	Minute	l	€/l	€	km	km_gesamt	Anmerkung
 NA	NA	2014	NA	NA	40,00	NA	60,00	440,2	NA
 15	07	2014	NA	NA	38,59	1,569	60,55	503,2	NA

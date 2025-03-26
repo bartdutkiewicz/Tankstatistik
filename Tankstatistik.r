@@ -22,11 +22,11 @@ rm(list=ls(all=TRUE))
 #----------#
 
 # Einlesen der Rohdaten
-df.raw <- read.table("Input_Data\\Tankstatistik_raw.txt",
+df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
                      col.names=c("Tag", "Monat", "Jahr", "Stunde",
                                  "Minute", "Liter","Euro_Liter", "Euro",
                                  "km", "km_gesamt", "Anmerkung"),
-                     header=TRUE, sep = "", dec = ",", skip = 3, fill = TRUE)
+                     header=TRUE, sep = "", dec = ",", skip = 5, fill = TRUE)
 
 
 # Datensatz betrachten
@@ -880,9 +880,27 @@ Abb.Euro.Tag.Jahr
 #--------#
 
 ## Aufbereiteter Datensatz als Textdatei
-write.table(df.export, "Output_Data\\Corolla_Refuellings.txt", row.names = FALSE)
-#Ohne Zeilenindes erspart große Schwierigkeiten in SQL
+# Information zum Datensatz
+head <- "Corolla_Betankungen_reconstructed
+B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
+Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
+UT164AEB103030101
+Aufbereitete Daten"
+
+# Datei öffnen
+Export.File.Con <- file("Output_Data\\Corolla_Betankungen_reconstructed.txt", open = "wt")
+
+# Information schreiben
+writeLines(head, Export.File.Con, sep = "\n")
+
+# Daten schreiben
+write.table(df.export, Export.File.Con,
+            append = TRUE, quote = FALSE, sep ="\t", row.names = FALSE)
+#Ohne Zeilenindex erspart große Schwierigkeiten in SQL
 #Auch ist ein Zeilenindex fast immer redundant bei der Bearbeitung anderswo
+
+# Datei schließen
+close(Export.File.Con)
 
 
 ## Aufbereiteter Datensatz in lokale postgreSQL
