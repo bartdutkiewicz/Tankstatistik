@@ -150,6 +150,7 @@ df.export <- df.raw
 
 # In Spaltennamen Punkt durch Unterstrich ersetzen
 names(df.export) <- gsub(x = names(df.export), pattern = "\\.", replacement = "_")
+#Punkte in Spaltennamen sind in R üblich, jedoch in anderen Werkzeugen wie Python problematisch.
 
 
 ## Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
@@ -589,7 +590,7 @@ Abb.Liter
 
 # Verlauf der Literpreise
 Abb.Literpreise <- ggplot(data = df,
-                          mapping = aes(x = Datum, y = Euro_Liter)) +
+                          mapping = aes(x = Datum, y = Euro.Liter)) +
   theme_light() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   theme(axis.title.x = element_text(face = "bold", size = 15)) +
@@ -908,7 +909,7 @@ writeLines(head, Export.File.Con, sep = "\n")
 # Daten schreiben
 write.table(df.export, file = Export.File.Con,
             append = TRUE, quote = TRUE, sep ="\t",
-            na = "NA", dec = ".", row.names = FALSE)
+            na = "NA", dec = ",", row.names = FALSE)
 #Ohne Zeilenindex erspart große Schwierigkeiten in SQL
 #Auch ist ein Zeilenindex fast immer redundant bei der Bearbeitung anderswo
 #Für SQL ist der Export mit Punkt als Dezimaltrennzeichen eingestellt.
