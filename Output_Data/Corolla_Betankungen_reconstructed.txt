@@ -3,7 +3,7 @@ B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
 Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
 UT164AEB103030101
 Aufbereitete Daten
-Tag	Monat	Jahr	Stunde	Minute	Liter	Euro_Liter	Euro	km	km_gesamt	Datum	Tage	Liter.km	Euro.km	km.Tag	Liter.Tag	Euro.Tag
+"Tag"	"Monat"	"Jahr"	"Stunde"	"Minute"	"Liter"	"Euro_Liter"	"Euro"	"km"	"km_gesamt"	"Datum"	"Tage"	"Liter_km"	"Euro_km"	"km_Tag"	"Liter_Tag"	"Euro_Tag"
 20	6	2014	NA	NA	40	1.5	60	440	108823	2014-06-20	25	0.0909	0.1363	17.608	1.6	2.4
 15	7	2014	NA	NA	38.59	1.569	60.55	503	109326	2014-07-15	38	0.0767	0.1203	13.242	1.0155	1.5934
 22	8	2014	NA	NA	37.23	1.559	58.04	478	109804	2014-08-22	51	0.0778	0.1213	9.382	0.73	1.138

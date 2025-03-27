@@ -1,3 +1,10 @@
+# In Exportdatensatz Spaltennamen mit "_" vereinheitlichen.
+# Spaltennamen für das Einlasen korrigieren.
+# Export als R-Objekt, XML, JSON, Excel, OpenDocument, SQLite
+# If-else für das Einlesen erstellen (Arbeitspeicher, R-Objekt, Textdatei)
+
+
+
 #----------------------------------------------------#
 # Auswertung der Tankstatistik für                   #
 # Toyota Corolla, Bj.1998, Benzin, 920kg, 81kw,      #
@@ -6,7 +13,7 @@
 # B.R.Dutkiewicz                                     #
 #----------------------------------------------------#
 
-# Letzte wesentliche Änderung: 25.03.2025
+# Letzte wesentliche Änderung: 27.03.2025
 # Verwendete Version: R 4.4.3
 
 # Arbeitsverzeichnis festgelegt?
@@ -24,9 +31,9 @@ rm(list=ls(all=TRUE))
 # Einlesen der Rohdaten
 df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
                      col.names=c("Tag", "Monat", "Jahr", "Stunde",
-                                 "Minute", "Liter","Euro_Liter", "Euro",
-                                 "km", "km_gesamt", "Anmerkung"),
-                     header=TRUE, sep = "", dec = ",", skip = 5, fill = TRUE)
+                                 "Minute", "Liter","Euro.Liter", "Euro",
+                                 "km", "km.gesamt", "Anmerkung"),
+                     header=TRUE, sep = "\t", dec = ",", skip = 5, fill = TRUE)
 
 
 # Datensatz betrachten
@@ -121,10 +128,11 @@ df.raw$Tag <- as.integer(df.raw$Tag)
 df.raw$Monat <- as.integer(df.raw$Monat)
 
 
+
 ### Aufbereitung Teil 3
 # Runden aller Spalten für einheitliche Anzahl an Nachkommastellen
 df.raw$km <- round(df.raw$km)
-df.raw$km_gesamt <- round(df.raw$km_gesamt)
+df.raw$km.gesamt <- round(df.raw$km.gesamt)
 df.raw$Liter.km <- round(df.raw$Liter.km, 4)
 df.raw$Euro.km <- round(df.raw$Euro.km, 4)
 df.raw$km.Tag <- round(df.raw$km.Tag, 3)
@@ -137,10 +145,14 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 # Varianten erzeugen #----
 #--------------------#
 
-# Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
+## Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
 df.export <- df.raw
 
-# Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
+# In Spaltennamen Punkt durch Unterstrich ersetzen
+names(df.export) <- gsub(x = names(df.export), pattern = "\\.", replacement = "_")
+
+
+## Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
 df.raw <- df.raw[-nrow(df.raw), ]
 df <- df.raw
 rm(df.raw)
@@ -894,10 +906,12 @@ Export.File.Con <- file("Output_Data\\Corolla_Betankungen_reconstructed.txt", op
 writeLines(head, Export.File.Con, sep = "\n")
 
 # Daten schreiben
-write.table(df.export, Export.File.Con,
-            append = TRUE, quote = FALSE, sep ="\t", row.names = FALSE)
+write.table(df.export, file = Export.File.Con,
+            append = TRUE, quote = TRUE, sep ="\t",
+            na = "NA", dec = ".", row.names = FALSE)
 #Ohne Zeilenindex erspart große Schwierigkeiten in SQL
 #Auch ist ein Zeilenindex fast immer redundant bei der Bearbeitung anderswo
+#Für SQL ist der Export mit Punkt als Dezimaltrennzeichen eingestellt.
 
 # Datei schließen
 close(Export.File.Con)
