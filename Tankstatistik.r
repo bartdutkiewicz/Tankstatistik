@@ -17,9 +17,12 @@ rm(list=ls(all=TRUE))
 
 
 
-#----------#
-# Einlesen #----
-#----------#
+#--------------#
+# Aufbereitung #----
+#--------------#
+##----------#
+## Einlesen #----
+##----------#
 
 # Einlesen der Rohdaten
 df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
@@ -27,7 +30,6 @@ df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
                                  "Minute", "Liter","Euro.Liter", "Euro",
                                  "km", "km.gesamt", "Anmerkung"),
                      header=TRUE, sep = "\t", dec = ",", skip = 5, fill = TRUE)
-
 
 # Datensatz betrachten
 head(df.raw)
@@ -42,9 +44,9 @@ df.raw <- df.raw[, -11]
 
 
 
-#-------------------#
-# Datenaufbereitung #----
-#-------------------#
+##-------------------#
+## Datenaufbereitung #----
+##-------------------#
 
 ### Rekonstruktion Teil 1
 # Rekonstruktion von [1, 1]; [1, 2] (Tag und Monat)
@@ -137,9 +139,9 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 
 
 
-#--------------------#
-# Varianten erzeugen #----
-#--------------------#
+##--------------------#
+## Varianten erzeugen #----
+##--------------------#
 
 ## Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
 df.export <- df.raw
@@ -156,9 +158,12 @@ rm(df.raw)
 
 
 
-#---------------------------------------#
-# Auswertung über den gesamten Zeitraum #----
-#---------------------------------------#
+#------------#
+# Auswertung #----
+#------------#
+##-------------------#
+## Gesamter Zeitraum #----
+##-------------------#
 
 ## Summen
 # Gesamtverbrauch an Benzin in Litern
@@ -242,9 +247,9 @@ rm(Mittel.a, Mittel.m, Mittel.diff.abs, Mittel.diff.rel)
 
 
 
-#----------------------#
-# Jährliche Auswertung #----
-#----------------------#
+##-------#
+## Jahre #----
+##-------#
 
 # Aufteilen nach Jahr
 df.Jahr <- split(df, df$Jahr)
@@ -380,9 +385,9 @@ Mittel.diff.Jahr.rel <- ((Mittel.Jahr.m - Mittel.Jahr.a)/Mittel.Jahr.m) * 100
 
 
 
-#--------------------#
-# Ausgabe Auswertung #----
-#--------------------#
+##--------------------#
+## Ausgabe Auswertung #----
+##--------------------#
 
 ## Gesamter Zeitraum
 # Zusammenfassung aller Summen, Mittelwerte und Quotienten des Gesamtzeitraumes
@@ -408,8 +413,11 @@ print(Mittel.diff.Jahr.rel)
 #-------------#
 # Abbildungen #----
 #-------------#
+##-----------#
+## Vorarbeit #----
+##-----------#
 
-# Pakete laden
+## Pakete laden
 library(tidyverse)
 library(wesanderson) #Farbpaletten
 
@@ -422,12 +430,14 @@ Summen.Jahr <- round(Summen.Jahr, digits = 0)
 # Data Frame als Tibble
 df <- as_tibble(df)
 
-# Jahresmittelwerte in brauchbare Form bringen und zusammenführen
+## Jahresmittelwerte in brauchbare Form bringen und zusammenführen
+# Arithmetrisches Mittel
 long.Mittel.Jahr.a <- Mittel.Jahr.a
 names(long.Mittel.Jahr.a) <- str_sub(names(long.Mittel.Jahr.a), 1, nchar(names(long.Mittel.Jahr.a))-2) #Letzte beide Zeichen in den Spaltennamen Entfernen
 long.Mittel.Jahr.a$Jahr <- as.integer(rownames(long.Mittel.Jahr.a)) #Jahr in Spalte ziehen
 long.Mittel.Jahr.a$Mittel <- rep("arithmetrisch", nrow(long.Mittel.Jahr.a)) #Mittel in Spalte hinzufügen
 
+# Median
 long.Mittel.Jahr.m <- Mittel.Jahr.m
 names(long.Mittel.Jahr.m) <- str_sub(names(long.Mittel.Jahr.m), 1, nchar(names(long.Mittel.Jahr.m))-2) #Das Gleiche für den Median
 long.Mittel.Jahr.m$Jahr <- as.integer(rownames(long.Mittel.Jahr.m))
@@ -443,7 +453,11 @@ Mittel.Jahr <- as_tibble(Mittel.Jahr) #In Tibble umwandeln
 rm(long.Mittel.Jahr.a, long.Mittel.Jahr.m)
 
 
-## Jahressummen----
+
+##--------------#
+## Jahressummen #----
+##--------------#
+
 # Betankungen je Jahr
 Abb.Betankungen.Jahr <- ggplot(data = Summen.Jahr) +
   theme_bw() +
@@ -563,7 +577,11 @@ Abb.Gesamtausgaben.Jahr <- ggplot(data = Summen.Jahr) +
 Abb.Gesamtausgaben.Jahr
 
 
-## Verläufe----
+
+##----------#
+## Verläufe #----
+##----------#
+
 # Getankte Liter je Betankung
 Abb.Liter <- ggplot(data = df,
                     mapping = aes(x = Datum, y = Liter)) +
@@ -669,7 +687,11 @@ Abb.Liter.100km
 # TBD: Reichweite je Tank + Farbskala Abstand je Betankung
 
 
-## Jahresmittel (artithmetrisch und median)----
+
+##------------------------------------------#
+## Jahresmittel (artithmetrisch und median) #----
+##------------------------------------------#
+
 # Liter je Betankung
 Abb.Liter.Jahr <- ggplot(data = Mittel.Jahr) +
   theme_bw() +
@@ -887,13 +909,21 @@ Abb.Euro.Tag.Jahr
 #--------#
 # Export #----
 #--------#
+##-------#
+## Daten #----
+##-------#
+###----------#
+### R-Objekt #----
+###----------#
 
-### R-Objekt
 save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.RDS")
 
 
 
-### Textdatei
+###-----------#
+### Textdatei #----
+###-----------#
+
 ## Aufbereitete Daten
 # Information zum Datensatz
 head <- "Corolla_Betankungen_reconstructed
@@ -945,12 +975,18 @@ close(Export.File.Con)
 
 
 
-### postgreSQL
+###------------#
+### postgreSQL #----
+###------------#
+
 # (Nur lokal auf eigenem Rechner. In gesondertem Skript!)
 
 
 
-### SQLite
+###--------#
+### SQLite #----
+###--------#
+
 ## Paket laden
 library(RSQLite)
 
@@ -983,14 +1019,20 @@ dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
 
 
 
-### XML
+###-----#
+### XML #----
+###-----#
+
 ## Paket laden und schreiben
 library(MESS)
 write.xml(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.xml")
 
 
 
-### JSON
+###------#
+### JSON #----
+###------#
+
 ## Paket laden
 library(jsonlite)
 
@@ -1007,19 +1049,27 @@ write_json(df.export.json.row, "Output_Data\\Corolla_Betankungen_reconstructed.r
 
 
 
-### Python Pandas
+###---------------#
+### Python Pandas #----
+###---------------#
+
 # Nein, einfach nur nein! Besser SQLite oder Apache Parquet
 
 
+###----------------#
+### Apache Parquet #----
+###----------------#
 
-### Apache Parquet
 ## Paket laden und schreiben
 library(arrow)
 write_parquet(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.parquet")
 
 
 
-### Auswertungen
+##--------------#
+## Auswertungen #----
+##--------------#
+
 write.table(Summen, "Output_Files\\Tankstatistik_Gesamtsummen.txt")
 write.table(Mittel, "Output_Files\\Tankstatistik_Mittel.txt")
 write.table(Summen.Jahr, "Output_Files\\Tankstatistik_Jahressummen.txt")
@@ -1028,5 +1078,8 @@ write.table(Mittel.Jahr.m, "Output_Files\\Tankstatistik_Jahresmittel_median.txt"
 
 
 
-### Abbildungen
+##-------------#
+## Abbildungen #----
+##-------------#
+
 # (Nur bei Bedarf)
