@@ -986,9 +986,22 @@ dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
 ### XML
 ## Paket laden
 library(MESS)
-write_xml(df.export, "Output_Data\\Corolla_Betankungen.xml")
+write.xml(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.xml")
+
+
 
 ### JSON
+## Paket laden
+library(jsonlite)
+
+## JSON-Spalten
+df.export.json.col <- toJSON(df.export, dataframe = "columns", pretty = TRUE)
+write_json(df.export.json.col, "Output_Data\\Corolla_Betankungen_reconstructed.col.json")
+
+
+## JSON-Reihen
+df.export.json.row <- toJSON(df.export, dataframe = "rows", pretty = TRUE)
+write_json(df.export.json.row, "Output_Data\\Corolla_Betankungen_reconstructed.row.json")
 
 
 
