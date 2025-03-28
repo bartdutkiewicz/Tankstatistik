@@ -1,6 +1,6 @@
 Corolla_refuelellings_reconstructed
 B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
-Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 600rpm 195kphmax 1587cm3 40 liter tank
+Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 6000rpm 195kphmax 1587cm3 40 liter tank
 UT164AEB103030101
 Reconstructed Data
 "day"	"month"	"year"	"hour"	"minute"	"liter"	"euro_liter"	"euro"	"km"	"km_total"	"date"	"days"	"liter_km"	"euro_km"	"km_day"	"liter_day"	"euro_day"

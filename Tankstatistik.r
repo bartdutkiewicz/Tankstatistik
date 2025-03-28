@@ -1,10 +1,3 @@
-# In Exportdatensatz Spaltennamen mit "_" vereinheitlichen.
-# Spaltennamen für das Einlasen korrigieren.
-# Export als R-Objekt, XML, JSON, Excel, OpenDocument, SQLite
-# If-else für das Einlesen erstellen (Arbeitspeicher, R-Objekt, Textdatei)
-
-
-
 #----------------------------------------------------#
 # Auswertung der Tankstatistik für                   #
 # Toyota Corolla, Bj.1998, Benzin, 920kg, 81kw,      #
@@ -13,7 +6,7 @@
 # B.R.Dutkiewicz                                     #
 #----------------------------------------------------#
 
-# Letzte wesentliche Änderung: 27.03.2025
+# Letzte wesentliche Änderung: 28.03.2025
 # Verwendete Version: R 4.4.3
 
 # Arbeitsverzeichnis festgelegt?
@@ -40,6 +33,9 @@ df.raw <- read.table("Input_Data\\Corolla_Betankungen_raw.txt",
 head(df.raw)
 tail(df.raw, n = 6)
 str(df.raw)
+
+# Exportversion der Rohdaten
+df.export.raw <- df.raw
 
 # Löschen der Anmerkungen
 df.raw <- df.raw[, -11]
@@ -892,11 +888,12 @@ Abb.Euro.Tag.Jahr
 # Export #----
 #--------#
 
-## R-Objekt
+### R-Objekt
 save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.Rdata")
 
 
-## Textdatei
+### Textdatei
+## Aufbereitete Daten
 # Information zum Datensatz
 head <- "Corolla_Betankungen_reconstructed
 B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
@@ -918,11 +915,12 @@ write.table(df.export, file = Export.File.Con,
 # Datei schließen
 close(Export.File.Con)
 
-## Englische Textdatei
+
+## Englische Version
 # Information zum Datensatz
 head.en <- "Corolla_refuelellings_reconstructed
 B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
-Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 600rpm 195kphmax 1587cm3 40 liter tank
+Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 6000rpm 195kphmax 1587cm3 40 liter tank
 UT164AEB103030101
 Reconstructed Data"
 
@@ -945,15 +943,50 @@ write.table(df.export.en, file = Export.File.Con,
 close(Export.File.Con)
 
 
-## Aufbereiteter Datensatz in lokale postgreSQL
-# (In gesondertem Skript!)
+### postgreSQL
+# (Nur lokal auf eigenem Rechner. In gesondertem Skript!)
 
 
-## Aufbereiteter Datensatz als SQLite
-# TBD
+
+### SQLite
+## Paket laden
+library(RSQLite)
+
+## Datenbank erzeugen und anbinden
+SQLite.conn <- dbConnect(RSQLite::SQLite(), "Output_Data\\Corolla_Refuellings.db")
+
+## Beschreibung des Autos
+# Tabelle
+technische_daten <- c("marke", "modell", "baujahr", "kraftstoff", "gewicht_kg", "leistung_kw", "Umin", "geschwindigkeit_kmh", "hubraum_cm2", "fassungsvermögen_L", "fahrgestellnummer")
+technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg", "power_kw", "rpm", "speed_kph", "displacement_ccm", "capacity_L", "chassis_number")
+value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
+car_data <- data.frame(technische_daten, technical_data, value)
+
+## In Datenbank laden und anpassen
+dbWriteTable(SQLite.conn, "car_data", car_data)
 
 
-## Auswertungen
+## Rohdaten
+
+## Aufbereitete Daten
+
+## Aufbereitete Daten Englisch
+
+
+
+### XML
+
+
+
+### JSON
+
+
+
+### Python Pandas
+
+
+
+### Auswertungen
 write.table(Summen, "Output_Files\\Tankstatistik_Gesamtsummen.txt")
 write.table(Mittel, "Output_Files\\Tankstatistik_Mittel.txt")
 write.table(Summen.Jahr, "Output_Files\\Tankstatistik_Jahressummen.txt")
@@ -961,5 +994,5 @@ write.table(Mittel.Jahr.a, "Output_Files\\Tankstatistik_Jahresmittel_arithmetris
 write.table(Mittel.Jahr.m, "Output_Files\\Tankstatistik_Jahresmittel_median.txt")
 
 
-## Abbildungen
+### Abbildungen
 # (Nur bei Bedarf)
