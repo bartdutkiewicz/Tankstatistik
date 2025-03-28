@@ -984,7 +984,7 @@ dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
 
 
 ### XML
-## Paket laden
+## Paket laden und schreiben
 library(MESS)
 write.xml(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.xml")
 
@@ -994,10 +994,12 @@ write.xml(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.xml")
 ## Paket laden
 library(jsonlite)
 
+
 ## JSON-Spalten
 df.export.json.col <- toJSON(df.export, dataframe = "columns", pretty = TRUE)
 write_json(df.export.json.col, "Output_Data\\Corolla_Betankungen_reconstructed.col.json")
 #Zweistufig um a) Spaltennamen zu exportieren b) Format zu bestimmmen
+
 
 ## JSON-Reihen
 df.export.json.row <- toJSON(df.export, dataframe = "rows", pretty = TRUE)
@@ -1006,6 +1008,14 @@ write_json(df.export.json.row, "Output_Data\\Corolla_Betankungen_reconstructed.r
 
 
 ### Python Pandas
+# Nein, einfach nur nein! Besser SQLite oder Apache Parquet
+
+
+
+### Apache Parquet
+## Paket laden und schreiben
+library(arrow)
+write_parquet(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.parquet")
 
 
 
@@ -1015,6 +1025,7 @@ write.table(Mittel, "Output_Files\\Tankstatistik_Mittel.txt")
 write.table(Summen.Jahr, "Output_Files\\Tankstatistik_Jahressummen.txt")
 write.table(Mittel.Jahr.a, "Output_Files\\Tankstatistik_Jahresmittel_arithmetrisch.txt")
 write.table(Mittel.Jahr.m, "Output_Files\\Tankstatistik_Jahresmittel_median.txt")
+
 
 
 ### Abbildungen
