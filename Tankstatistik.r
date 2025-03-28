@@ -364,7 +364,8 @@ Mittel.Jahr.m <- data.frame(cbind(Liter.Tank.Jahr.m,
 
 ## Bereinigung Arbeitsumgebung
 # Entfernen aller ab hier unnötigen Objekte
-rm(Liter.Tank.Jahr.m,
+rm(df.Jahr,
+   Liter.Tank.Jahr.m,
    Literpreis.Jahr.m,
    Euro.Tank.Jahr.m,
    KM.Tank.Jahr.m,
@@ -973,6 +974,9 @@ write.table(df.export.en, file = Export.File.Con,
 # Datei schließen
 close(Export.File.Con)
 
+# Entfernen aller ab hier unnötigen Objekte
+rm(Export.File.Con, head, head.en)
+
 
 
 ###------------#
@@ -992,30 +996,39 @@ library(RSQLite)
 
 
 ## Datenbank erzeugen und anbinden
-SQLite.conn <- dbConnect(RSQLite::SQLite(), "Output_Data\\Corolla_Refuellings.db")
+SQLite.conn <- dbConnect(RSQLite::SQLite(), "Output_Data\\Corolla_Refuellings.db",
+                         overwrite = TRUE)
 
 
-## Beschreibung des Autos
+## Technische Daten
 # Tabelle
 technische_daten <- c("marke", "modell", "baujahr", "kraftstoff", "gewicht_kg", "leistung_kw", "Umin", "geschwindigkeit_kmh", "hubraum_cm2", "fassungsvermögen_L", "fahrgestellnummer")
 technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg", "power_kw", "rpm", "speed_kph", "displacement_ccm", "capacity_L", "chassis_number")
 value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
 car_data <- data.frame(technische_daten, technical_data, value)
 
-# In Datenbank laden und anpassen
-dbWriteTable(SQLite.conn, "car_data", car_data)
+# In Datenbank laden
+dbWriteTable(SQLite.conn, "car_data", car_data,
+             overwrite = TRUE)
 
 
 ## Rohdaten
-dbWriteTable(SQLite.conn, "corolla_betankungen_raw", df.export.raw)
+dbWriteTable(SQLite.conn, "corolla_betankungen_raw", df.export.raw,
+             overwrite = TRUE)
 
 
 ## Aufbereitete Daten
-dbWriteTable(SQLite.conn, "corolla_betankungen_reconstructed", df.export)
+dbWriteTable(SQLite.conn, "corolla_betankungen_reconstructed", df.export,
+             overwrite = TRUE)
 
 
 ## Aufbereitete Daten Englisch
-dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
+dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en,
+             overwrite = TRUE)
+
+
+## Entfernen aller ab hier unnötigen Objekte
+rm(SQLite.conn, technische_daten, technical_data, value, car_data)
 
 
 
@@ -1048,12 +1061,16 @@ df.export.json.row <- toJSON(df.export, dataframe = "rows", pretty = TRUE)
 write_json(df.export.json.row, "Output_Data\\Corolla_Betankungen_reconstructed.row.json")
 
 
+## Entfernen aller ab hier unnötigen Objekte
+rm(df.export.json.col, df.export.json.row)
+
 
 ###---------------#
 ### Python Pandas #----
 ###---------------#
 
 # Nein, einfach nur nein! Besser SQLite oder Apache Parquet
+
 
 
 ###----------------#
