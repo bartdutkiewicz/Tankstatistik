@@ -892,7 +892,11 @@ Abb.Euro.Tag.Jahr
 # Export #----
 #--------#
 
-## Aufbereiteter Datensatz als Textdatei
+## R-Objekt
+save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.Rdata")
+
+
+## Textdatei
 # Information zum Datensatz
 head <- "Corolla_Betankungen_reconstructed
 B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
@@ -914,7 +918,7 @@ write.table(df.export, file = Export.File.Con,
 # Datei schließen
 close(Export.File.Con)
 
-## Englische Version als Textdatei
+## Englische Textdatei
 # Information zum Datensatz
 head.en <- "Corolla_refuelellings_reconstructed
 B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
