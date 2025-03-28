@@ -984,8 +984,9 @@ dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
 
 
 ### XML
-
-
+## Paket laden
+library(MESS)
+write_xml(df.export, "Output_Data\\Corolla_Betankungen.xml")
 
 ### JSON
 
