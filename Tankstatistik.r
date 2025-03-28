@@ -892,6 +892,7 @@ Abb.Euro.Tag.Jahr
 save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.Rdata")
 
 
+
 ### Textdatei
 ## Aufbereitete Daten
 # Information zum Datensatz
@@ -943,6 +944,7 @@ write.table(df.export.en, file = Export.File.Con,
 close(Export.File.Con)
 
 
+
 ### postgreSQL
 # (Nur lokal auf eigenem Rechner. In gesondertem Skript!)
 
@@ -952,8 +954,10 @@ close(Export.File.Con)
 ## Paket laden
 library(RSQLite)
 
+
 ## Datenbank erzeugen und anbinden
 SQLite.conn <- dbConnect(RSQLite::SQLite(), "Output_Data\\Corolla_Refuellings.db")
+
 
 ## Beschreibung des Autos
 # Tabelle
@@ -962,15 +966,20 @@ technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg"
 value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
 car_data <- data.frame(technische_daten, technical_data, value)
 
-## In Datenbank laden und anpassen
+# In Datenbank laden und anpassen
 dbWriteTable(SQLite.conn, "car_data", car_data)
 
 
 ## Rohdaten
+dbWriteTable(SQLite.conn, "corolla_betankungen_raw", df.export.raw)
+
 
 ## Aufbereitete Daten
+dbWriteTable(SQLite.conn, "corolla_betankungen_reconstructed", df.export)
+
 
 ## Aufbereitete Daten Englisch
+dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en)
 
 
 
