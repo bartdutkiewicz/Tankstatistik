@@ -889,7 +889,7 @@ Abb.Euro.Tag.Jahr
 #--------#
 
 ### R-Objekt
-save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.Rdata")
+save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.RDS")
 
 
 
@@ -997,7 +997,7 @@ library(jsonlite)
 ## JSON-Spalten
 df.export.json.col <- toJSON(df.export, dataframe = "columns", pretty = TRUE)
 write_json(df.export.json.col, "Output_Data\\Corolla_Betankungen_reconstructed.col.json")
-
+#Zweistufig um a) Spaltennamen zu exportieren b) Format zu bestimmmen
 
 ## JSON-Reihen
 df.export.json.row <- toJSON(df.export, dataframe = "rows", pretty = TRUE)
