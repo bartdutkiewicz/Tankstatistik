@@ -910,9 +910,32 @@ writeLines(head, Export.File.Con, sep = "\n")
 write.table(df.export, file = Export.File.Con,
             append = TRUE, quote = TRUE, sep ="\t",
             na = "NA", dec = ",", row.names = FALSE)
-#Ohne Zeilenindex erspart große Schwierigkeiten in SQL
-#Auch ist ein Zeilenindex fast immer redundant bei der Bearbeitung anderswo
-#Für SQL ist der Export mit Punkt als Dezimaltrennzeichen eingestellt.
+
+# Datei schließen
+close(Export.File.Con)
+
+## Englische Version als Textdatei
+# Information zum Datensatz
+head.en <- "Corolla_refuelellings_reconstructed
+B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
+Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 600rpm 195kphmax 1587cm3 40 liter tank
+UT164AEB103030101
+Reconstructed Data"
+
+# Englische Spaltennamen
+df.export.en <- df.export
+names(df.export.en) <- c("day", "month", "year", "hour", "minute", "liter", "euro_liter", "euro", "km", "km_total", "date", "days", "liter_km", "euro_km", "km_day", "liter_day", "euro_day")
+
+# Datei öffnen
+Export.File.Con <- file("Output_Data\\Corolla_refuellings_reconstructed.txt", open = "wt")
+
+# Information schreiben
+writeLines(head.en, Export.File.Con, sep = "\n")
+
+# Daten schreiben
+write.table(df.export.en, file = Export.File.Con,
+            append = TRUE, quote = TRUE, sep ="\t",
+            na = "NA", dec = ".", row.names = FALSE)
 
 # Datei schließen
 close(Export.File.Con)
