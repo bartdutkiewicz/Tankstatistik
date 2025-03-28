@@ -1,7 +1,7 @@
 Tankstatistik
 ================
 Bart R. Dutkiewicz
-25.03.2025
+27.03.2025
 
 ## Tank- und Verbrauchsstatistik eines Toyota Corolla Bj. 1998 ab Juni 2014
 
@@ -42,8 +42,7 @@ auf einem Mobiltelefon (Kilometerstände) erfasst:</b>
 - Anmerkungen zu Rabatten an der Kasse, Ungenauigkeiten etc. (nicht
   abgebildet)
 
-<b>Die folgende Analyse teilt sich in folgende Abschnitte (Tabs)
-auf:</b>
+<b>Die folgende Analyse teilt sich in folgende Abschnitte auf:</b>
 
 - <u>Datenaufbereitung:</u> die Rohdaten werden eingelesen und zur
   weiteren Verarbeitung vorbereitet. Lücken im Datensatz werden durch
@@ -183,7 +182,7 @@ auf:</b>
     ## 102  27     8 2024     17      9 39.01      1.719 67.06 456.000    150366
     ## 103   2    12 2024     10     13 37.77      1.719 64.93 474.200    150840
     ## 104  31    12 2024     18     53 41.32      1.749 72.27 495.400    151336
-    ## 105  13     1 2025      7     15 38.42      1.839 70.65      NA        NA
+    ## 105  13     3 2025      7     15 38.42      1.839 70.65      NA        NA
 
 Es ist zu sehen, dass der Datensatz aufgrund von verlorenen oder
 nicht-erhobenen Daten lückenhaft ist
@@ -292,15 +291,6 @@ df.raw$Euro.Tag <- df.raw$Euro / df.raw$Tage
 # Tag und Monat als Ganzzahlen speichern
 df.raw$Tag <- as.integer(df.raw$Tag)
 df.raw$Monat <- as.integer(df.raw$Monat)
-
-# Runden aller Spalten auf jeweils sinnvolle Dezimalstellen
-df.raw$km <- round(df.raw$km)
-df.raw$km_gesamt <- round(df.raw$km_gesamt)
-df.raw$Liter.km <- round(df.raw$Liter.km, 4)
-df.raw$Euro.km <- round(df.raw$Euro.km, 4)
-df.raw$km.Tag <- round(df.raw$km.Tag, 3)
-df.raw$Liter.Tag <- round(df.raw$Liter.Tag, 4)
-df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 ```
 
 #### Aufbereitung, Teil 3
@@ -435,7 +425,7 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
     ## 102  27     8 2024     17      9 39.01      1.719 67.06 456    150366
     ## 103   2    12 2024     10     13 37.77      1.719 64.93 474    150840
     ## 104  31    12 2024     18     53 41.32      1.749 72.27 495    151336
-    ## 105  13     1 2025      7     15 38.42      1.839 70.65  NA        NA
+    ## 105  13     3 2025      7     15 38.42      1.839 70.65  NA        NA
     ##          Datum Tage Liter.km Euro.km  km.Tag Liter.Tag Euro.Tag
     ## 1   2014-06-20   25   0.0909  0.1363  17.608    1.6000   2.4000
     ## 2   2014-07-15   38   0.0767  0.1203  13.242    1.0155   1.5934
@@ -540,8 +530,8 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
     ## 101 2024-07-20   38   0.0741  0.1408  14.593    1.0818   2.0545
     ## 102 2024-08-27   97   0.0855  0.1471   4.701    0.4022   0.6913
     ## 103 2024-12-02   29   0.0796  0.1369  16.352    1.3024   2.2390
-    ## 104 2024-12-31   13   0.0834  0.1459  38.108    3.1785   5.5592
-    ## 105 2025-01-13   NA       NA      NA      NA        NA       NA
+    ## 104 2024-12-31   72   0.0834  0.1459   6.881    0.5739   1.0037
+    ## 105 2025-03-13   NA       NA      NA      NA        NA       NA
 
 #### Datenstruktur des rekonstruierten Datensatzes
 
@@ -573,13 +563,20 @@ str(df.raw)
 Trennung des Datensatzes in eine Exportvariante und eine
 Auswertungsvariante. Die unvollständige jüngste Beobachtung wird für die
 weitere Auswertung nicht berücksichtigt und aus dem Auswertungsdatensatz
-entfernt.
+entfernt. Für die Exportvariante werden die in R üblichen Punkte in den
+Spaltennamen durch Unterstriche ersetzt, da erstere z.B. in SQL und
+Python Probleme verursachen.
 
 ``` r
-# Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
+## Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
 df.export <- df.raw
 
-# Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
+# In Spaltennamen Punkt durch Unterstrich ersetzen
+names(df.export) <- gsub(x = names(df.export), pattern = "\\.", replacement = "_")
+#Punkte in Spaltennamen sind in R üblich, jedoch in anderen Werkzeugen wie Python problematisch.
+
+
+## Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
 df.raw <- df.raw[-nrow(df.raw), ]
 df <- df.raw
 rm(df.raw)
@@ -597,7 +594,7 @@ und Posit.Cloud zu Verfügung gestellt.
 
 | Liter | Euro |    km | Tage | Betankungen |
 |------:|-----:|------:|-----:|------------:|
-|  3582 | 5205 | 42954 | 3860 |         104 |
+|  3582 | 5205 | 42954 | 3919 |         104 |
 
 Gesamtsummen seit Juni 2014
 
@@ -629,12 +626,12 @@ In den zwei rechten Spalten sind:
 | Euro_Liter |          1.45 |   1.42 |              -0.03 |                 -2.19 |
 | Euro       |         50.04 |  50.84 |               0.80 |                  1.58 |
 | km         |        413.02 | 448.50 |              35.48 |                  7.91 |
-| Tage       |         37.12 |  31.00 |              -6.12 |                -19.73 |
+| Tage       |         37.68 |  31.50 |              -6.18 |                -19.63 |
 | Liter.km   |          0.08 |   0.08 |               0.00 |                  0.84 |
 | Euro.km    |          0.12 |   0.11 |              -0.01 |                 -6.88 |
-| km.Tag     |         11.13 |  14.47 |               3.34 |                 23.08 |
-| Liter.Tag  |          0.93 |   1.22 |               0.29 |                 23.73 |
-| Euro.Tag   |          1.35 |   1.64 |               0.29 |                 17.79 |
+| km.Tag     |         10.96 |  14.24 |               3.28 |                 23.02 |
+| Liter.Tag  |          0.91 |   1.20 |               0.28 |                 23.67 |
+| Euro.Tag   |          1.33 |   1.61 |               0.29 |                 17.72 |
 
 Gesamtmittel
 
@@ -687,7 +684,7 @@ Jahressummen
 | 2021 | 37.61 | 1.62 | 60.87 | 492.80 | 64.20 | 0.08 | 0.12 | 0.95 | 0.59 | 0.95 |
 | 2022 | 39.25 | 1.87 | 73.08 | 498.50 | 89.50 | 0.08 | 0.15 | 0.82 | 0.44 | 0.82 |
 | 2023 | 39.09 | 1.84 | 72.10 | 484.00 | 64.33 | 0.08 | 0.15 | 1.12 | 0.61 | 1.12 |
-| 2024 | 39.66 | 1.79 | 71.20 | 495.50 | 52.67 | 0.08 | 0.14 | 1.35 | 0.75 | 1.35 |
+| 2024 | 39.66 | 1.79 | 71.20 | 495.50 | 62.50 | 0.08 | 0.14 | 1.14 | 0.63 | 1.14 |
 
 Jahresmittel (arithmetrisch)
 
@@ -705,7 +702,7 @@ Jahresmittel (arithmetrisch)
 | 2021 | 38.50 |       1.61 | 63.01 | 491.0 | 57.0 |     0.08 |    0.13 |   1.11 |      0.68 |     1.11 |
 | 2022 | 39.25 |       1.85 | 72.68 | 503.5 | 83.5 |     0.08 |    0.14 |   0.87 |      0.47 |     0.87 |
 | 2023 | 38.84 |       1.86 | 72.44 | 483.5 | 66.0 |     0.08 |    0.15 |   1.10 |      0.59 |     1.10 |
-| 2024 | 39.52 |       1.77 | 70.98 | 484.5 | 35.5 |     0.08 |    0.15 |   2.00 |      1.11 |     2.00 |
+| 2024 | 39.52 |       1.77 | 70.98 | 484.5 | 55.0 |     0.08 |    0.15 |   1.29 |      0.72 |     1.29 |
 
 Jahresmittel (median)
 
@@ -723,7 +720,7 @@ Jahresmittel (median)
 | 2021 | 0.89 | -0.01 | 2.14 | -1.80 | -7.20 | 0.00 | 0.00 | 0.16 | 0.09 | 0.16 |
 | 2022 | 0.00 | -0.01 | -0.39 | 5.00 | -6.00 | 0.00 | 0.00 | 0.05 | 0.03 | 0.05 |
 | 2023 | -0.25 | 0.01 | 0.33 | -0.50 | 1.67 | 0.00 | 0.00 | -0.02 | -0.02 | -0.02 |
-| 2024 | -0.15 | -0.02 | -0.22 | -11.00 | -17.17 | 0.00 | 0.00 | 0.65 | 0.36 | 0.65 |
+| 2024 | -0.15 | -0.02 | -0.22 | -11.00 | -7.50 | 0.00 | 0.00 | 0.15 | 0.08 | 0.15 |
 
 Absolute Differenz Median - Arith. Mittel
 
@@ -741,7 +738,7 @@ Absolute Differenz Median - Arith. Mittel
 | 2021 | 2.30 | -0.50 | 3.40 | -0.37 | -12.63 | 2.66 | 3.75 | 14.23 | 13.26 | 14.23 |
 | 2022 | -0.01 | -0.67 | -0.54 | 0.99 | -7.19 | -1.02 | -1.55 | 6.20 | 6.69 | 6.20 |
 | 2023 | -0.66 | 0.81 | 0.46 | -0.10 | 2.53 | -0.55 | 0.56 | -2.12 | -3.26 | -2.12 |
-| 2024 | -0.37 | -1.13 | -0.31 | -2.27 | -48.36 | 1.86 | 1.91 | 32.38 | 32.34 | 32.38 |
+| 2024 | -0.37 | -1.13 | -0.31 | -2.27 | -13.64 | 1.86 | 1.91 | 11.72 | 11.67 | 11.72 |
 
 Relative Differenz Median - Arith. Mittel in Prozent
 
@@ -864,7 +861,7 @@ Zunächst wird ein Blick auf die akkumulierten Werte geworfen.
 
 | Liter | Euro |    km | Tage | Betankungen |
 |------:|-----:|------:|-----:|------------:|
-|  3582 | 5205 | 42954 | 3860 |         104 |
+|  3582 | 5205 | 42954 | 3919 |         104 |
 
 Gesamtsummen seit Juni 2014
 

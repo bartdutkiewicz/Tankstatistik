@@ -1,7 +1,7 @@
 ---
 title: "Tankstatistik"
 author: "Bart R. Dutkiewicz"
-date: "25.03.2025"
+date: "27.03.2025"
 output: github_document
 code_download: true
 ---
@@ -42,7 +42,7 @@ Mobiltelefon (Kilometerstände) erfasst:</b>
 -   Kilometerstand
 -   Anmerkungen zu Rabatten an der Kasse, Ungenauigkeiten etc. (nicht abgebildet)
 
-<b>Die folgende Analyse teilt sich in folgende Abschnitte (Tabs) auf:</b>
+<b>Die folgende Analyse teilt sich in folgende Abschnitte auf:</b>
 
 -   <u>Datenaufbereitung:</u> die Rohdaten werden eingelesen und zur weiteren Verarbeitung vorbereitet. Lücken im Datensatz werden durch Schätzung auf Grundlage benachbarter Werte und durch Rückrechnung aufgefüllt. Zudem werden einige Quotienten berechnet.
 -   <u>Gesamtzeitraum:</u> es werden kumulierte Summen, arithmetrische Mittel und Mediane (wo aussagekräftig) über den gesamten Zeitraum berechnet und letzere beide miteinander verglichen.
@@ -172,15 +172,6 @@ df.raw$Euro.Tag <- df.raw$Euro / df.raw$Tage
 # Tag und Monat als Ganzzahlen speichern
 df.raw$Tag <- as.integer(df.raw$Tag)
 df.raw$Monat <- as.integer(df.raw$Monat)
-
-# Runden aller Spalten auf jeweils sinnvolle Dezimalstellen
-df.raw$km <- round(df.raw$km)
-df.raw$km_gesamt <- round(df.raw$km_gesamt)
-df.raw$Liter.km <- round(df.raw$Liter.km, 4)
-df.raw$Euro.km <- round(df.raw$Euro.km, 4)
-df.raw$km.Tag <- round(df.raw$km.Tag, 3)
-df.raw$Liter.Tag <- round(df.raw$Liter.Tag, 4)
-df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 ```
 
 #### Aufbereitung, Teil 3
@@ -219,14 +210,18 @@ str(df.raw)
 
 #### Datensatzvarianten erzeugen
 
-Trennung des Datensatzes in eine Exportvariante und eine Auswertungsvariante.
-Die unvollständige jüngste Beobachtung wird für die weitere Auswertung nicht berücksichtigt und aus dem Auswertungsdatensatz entfernt.
+Trennung des Datensatzes in eine Exportvariante und eine Auswertungsvariante. Die unvollständige jüngste Beobachtung wird für die weitere Auswertung nicht berücksichtigt und aus dem Auswertungsdatensatz entfernt. Für die Exportvariante werden die in R üblichen Punkte in den Spaltennamen durch Unterstriche ersetzt, da erstere z.B. in SQL und Python Probleme verursachen.
 
 ```{r Datensatzvarianten}
-# Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
+## Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
 df.export <- df.raw
 
-# Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
+# In Spaltennamen Punkt durch Unterstrich ersetzen
+names(df.export) <- gsub(x = names(df.export), pattern = "\\.", replacement = "_")
+#Punkte in Spaltennamen sind in R üblich, jedoch in anderen Werkzeugen wie Python problematisch.
+
+
+## Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
 df.raw <- df.raw[-nrow(df.raw), ]
 df <- df.raw
 rm(df.raw)
