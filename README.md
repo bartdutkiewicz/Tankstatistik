@@ -54,8 +54,7 @@ Grundliegendes Dokument ist jedoch das Skript [Tankstatistik.r](https://github.c
 
 
 ### Weiteres Vorgehen
-- Export in postgreSQL (getrenntes Skript)
-- Export in SQLite (im Skript als Demonstration)
+
 - Rückrechnung der gefahrenen Kilometer verbessern (anhand der Kilometerstände der Protokolle der Hauptuntersuchungen)
 
 - Zweite Projektpräsention mit Jupyter-Notebook
