@@ -6,8 +6,8 @@
 # B.R.Dutkiewicz                                     #
 #----------------------------------------------------#
 
-# Letzte wesentliche Änderung: 28.03.2025
-# Verwendete Version: R 4.4.3
+# Letzte wesentliche Änderung: 24.07.2025
+# Verwendete Version: R 4.5.1
 
 # Arbeitsverzeichnis festgelegt?
 getwd()
