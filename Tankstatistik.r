@@ -933,19 +933,22 @@ Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
 UT164AEB103030101
 Aufbereitete Daten"
 
-# Datei öffnen
-Export.File.Con <- file("Output_Data\\Corolla_Betankungen_reconstructed.txt", open = "wt")
+# Export als Funktion definieren
+ExportDataFrameDEU <- function(filename = "Output_Data\\Corolla_Betankungen_reconstructed.txt"){
+  # Verbindung öffnen
+  conn <- file(filename, open = "wt")
+  # Sicherstellen, dass Verbindung nach Ausführung der Funktion in allen Fällen geschlossen wird.
+  on.exit(close(conn), add = TRUE)
+  # Information schreiben
+  writeLines(head, conn, sep = "\n")
+  # Daten schreiben
+  write.table(df.export, file = conn,
+              append = TRUE, quote = TRUE, sep ="\t",
+              na = "NA", dec = ",", row.names = FALSE)
+  }
 
-# Information schreiben
-writeLines(head, Export.File.Con, sep = "\n")
-
-# Daten schreiben
-write.table(df.export, file = Export.File.Con,
-            append = TRUE, quote = TRUE, sep ="\t",
-            na = "NA", dec = ",", row.names = FALSE)
-
-# Datei schließen
-close(Export.File.Con)
+# Funktion aufrufen
+ExportDataFrameDEU()
 
 
 ## Englische Version
@@ -960,22 +963,21 @@ Reconstructed Data"
 df.export.en <- df.export
 names(df.export.en) <- c("day", "month", "year", "hour", "minute", "liter", "euro_liter", "euro", "km", "km_total", "date", "days", "liter_km", "euro_km", "km_day", "liter_day", "euro_day")
 
-# Datei öffnen
-Export.File.Con <- file("Output_Data\\Corolla_refuellings_reconstructed.txt", open = "wt")
+# Export als Funktion definieren
+ExportDataFrameENG <- function(filename = "Output_Data\\Corolla_refuellings_reconstructed.txt"){
+  conn <- file(filename, open = "wt")
+  on.exit(close(conn), add = TRUE)
+  writeLines(head.en, conn, sep = "\n")
+  write.table(df.export.en, file = conn,
+              append = TRUE, quote = TRUE, sep ="\t",
+              na = "NA", dec = ",", row.names = FALSE)
+  }
 
-# Information schreiben
-writeLines(head.en, Export.File.Con, sep = "\n")
-
-# Daten schreiben
-write.table(df.export.en, file = Export.File.Con,
-            append = TRUE, quote = TRUE, sep ="\t",
-            na = "NA", dec = ".", row.names = FALSE)
-
-# Datei schließen
-close(Export.File.Con)
+# Funktion aufrufen
+ExportDataFrameENG()
 
 # Entfernen aller ab hier unnötigen Objekte
-rm(Export.File.Con, head, head.en)
+rm(head, head.en)
 
 
 
@@ -994,12 +996,6 @@ rm(Export.File.Con, head, head.en)
 ## Paket laden
 library(RSQLite)
 
-
-## Datenbank erzeugen und anbinden
-SQLite.conn <- dbConnect(RSQLite::SQLite(), "Output_Data\\Corolla_Refuellings.db",
-                         overwrite = TRUE)
-
-
 ## Technische Daten
 # Tabelle
 technische_daten <- c("marke", "modell", "baujahr", "kraftstoff", "gewicht_kg", "leistung_kw", "Umin", "geschwindigkeit_kmh", "hubraum_cm2", "fassungsvermögen_L", "fahrgestellnummer")
@@ -1007,28 +1003,34 @@ technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg"
 value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
 car_data <- data.frame(technische_daten, technical_data, value)
 
-# In Datenbank laden
-dbWriteTable(SQLite.conn, "car_data", car_data,
-             overwrite = TRUE)
 
+# Export als Funktion definieren
+ExportDataFrameSQLite <- function(df.to.write,
+                                  table.name,
+                                  db = "Output_Data\\Corolla_Refuellings.db") {
+  # Datenbank öffnen / schließen
+  conn <- dbConnect(RSQLite::SQLite(), db, overwrite = TRUE)
+  on.exit(dbDisconnect(conn), add = TRUE)
 
-## Rohdaten
-dbWriteTable(SQLite.conn, "corolla_betankungen_raw", df.export.raw,
-             overwrite = TRUE)
+  # In Datenbank laden
+  dbWriteTable(conn, table.name, df.to.write, overwrite = TRUE)
+}
 
+# Technische Daten in DB laden
+ExportDataFrameSQLite(car_data, "car_data")
 
-## Aufbereitete Daten
-dbWriteTable(SQLite.conn, "corolla_betankungen_reconstructed", df.export,
-             overwrite = TRUE)
+# Rohdaten in DB laden
+ExportDataFrameSQLite(df.export.raw, "corolla_betankungen_raw")
 
+# Aufbereitete Daten in DB laden
+ExportDataFrameSQLite(df.export, "corolla_betankungen_reconstructed")
 
-## Aufbereitete Daten Englisch
-dbWriteTable(SQLite.conn, "corolla_refuellings_reconstructed", df.export.en,
-             overwrite = TRUE)
+# Aufbereitete Daten Englisch in DB laden
+ExportDataFrameSQLite(df.export.en, "corolla_refuellings_reconstructed")
 
 
 ## Entfernen aller ab hier unnötigen Objekte
-rm(SQLite.conn, technische_daten, technical_data, value, car_data)
+rm(technische_daten, technical_data, value, car_data)
 
 
 
