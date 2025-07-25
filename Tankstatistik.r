@@ -997,10 +997,10 @@ ExportDataFrameSQLite(car_data, "car_data")
 ExportDataFrameSQLite(df.export.raw, "corolla_betankungen_raw")
 
 # Aufbereitete Daten in DB laden
-ExportDataFrameSQLite(df.export, "corolla_betankungen_reconstructed")
+ExportDataFrameSQLite(df.export, "corolla_betankungen_reconstructed") #Exportiert Datum in UNIX-Tagen
 
 # Aufbereitete Daten Englisch in DB laden
-ExportDataFrameSQLite(df.export.en, "corolla_refuellings_reconstructed")
+ExportDataFrameSQLite(df.export.en, "corolla_refuellings_reconstructed") #Dito
 
 
 
