@@ -1,7 +1,7 @@
 ---
 title: "Tankstatistik"
 author: "Bart R. Dutkiewicz"
-date: "27.03.2025"
+date: "25.05.2025"
 output: github_document
 code_download: true
 ---
@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Tank- und Verbrauchsstatistik eines Toyota Corolla Bj. 1998 ab Juni 2014 {.tabset}
 
-In diesem Dokument wird die Tankstatistik eines Toyota Corolla Bj. 1998 seit 2014 fortlaufend ausgewertet. Das Auto wird durch den Urheber dieser Auswertung überwiegend innerhalb der Region Stuttgart bewegt und an städischen (sehr selten: an der Autobahn) Tankstellen der selben Region betankt.
+In diesem Projekt wird die Tankstatistik eines Toyota Corolla Bj. 1998 seit 2014 fortlaufend ausgewertet. Das Auto wird durch den Urheber dieser Auswertung überwiegend innerhalb der Region Stuttgart bewegt und an städischen Tankstellen betankt (in sehr seltenen Fällen an der Autobahn).
 
-Dieses Dokument und der zugrundeliegende Code ist <b>Work-In-Progress</b> (seit 2015) und das Datum bezieht sich auf die letzte <i>wesentliche</i> Änderung im Code. <b>Der Datensatz wird laufend ergänzt.</b> Die verwendete Version von R ist 4.4.3.
+Dieses Projekt ist <b>Work-In-Progress</b> und der Datensatz wird laufend ergänzt.</b> Die verwendete Version von R ist 4.5.1.
 
 
 <b>Bei dem Auto handelt es sich um:</b>
@@ -1138,13 +1138,17 @@ Die verbrauchten Liter je Jahr bestätigen dies hingegen nicht, da der große R�
 
 ### Export
 
-Im grundlegenden R-Skript werden folgende Exporte ausgeführt:
+*Im grundlegenden R-Skript werden folgende Exporte ausgeführt*:
 
--   Der Rekonstruierte Datensatz
--   Gesamtsummen und -mittel
--   Jahressummen und -mittel
--   <b>TBD:</b> SQLite (öffentlich)
--   <b>TBD:</b> postgreSQL (persönlich)
+Rekonstruierter Datensatz: 
+- Semi-strukturiert: TSV (auch in einer Englischen Version)
+- Strukturiert: XML, JSON
+- Binär: RDS, Parquet
+- Datenbank: postgreSQL, SQLite
+
+Beschreibende Statistiken (TSV):
+- Gesamtsummen und -mittel
+- Jahressummen und -mittel
 
 Diese Exporte und der dazugehörige Code sind kein Teil dieses Dokuments und stehen auf GitHub und Posit.Cloud zur Verfügung.
 

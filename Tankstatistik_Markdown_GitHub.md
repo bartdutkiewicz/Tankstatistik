@@ -1,20 +1,18 @@
 Tankstatistik
 ================
 Bart R. Dutkiewicz
-27.03.2025
+25.05.2025
 
 ## Tank- und Verbrauchsstatistik eines Toyota Corolla Bj. 1998 ab Juni 2014
 
-In diesem Dokument wird die Tankstatistik eines Toyota Corolla Bj. 1998
+In diesem Projekt wird die Tankstatistik eines Toyota Corolla Bj. 1998
 seit 2014 fortlaufend ausgewertet. Das Auto wird durch den Urheber
 dieser Auswertung überwiegend innerhalb der Region Stuttgart bewegt und
-an städischen (sehr selten: an der Autobahn) Tankstellen der selben
-Region betankt.
+an städischen Tankstellen betankt (in sehr seltenen Fällen an der
+Autobahn).
 
-Dieses Dokument und der zugrundeliegende Code ist
-<b>Work-In-Progress</b> (seit 2015) und das Datum bezieht sich auf die
-letzte <i>wesentliche</i> Änderung im Code. <b>Der Datensatz wird
-laufend ergänzt.</b> Die verwendete Version von R ist 4.4.3.
+Dieses Projekt ist <b>Work-In-Progress</b> und der Datensatz wird
+laufend ergänzt.</b> Die verwendete Version von R ist 4.5.1.
 
 <b>Bei dem Auto handelt es sich um:</b>
 
@@ -182,7 +180,8 @@ auf einem Mobiltelefon (Kilometerstände) erfasst:</b>
     ## 102  27     8 2024     17      9 39.01      1.719 67.06 456.000    150366
     ## 103   2    12 2024     10     13 37.77      1.719 64.93 474.200    150840
     ## 104  31    12 2024     18     53 41.32      1.749 72.27 495.400    151336
-    ## 105  13     3 2025      7     15 38.42      1.839 70.65      NA        NA
+    ## 105  13     3 2025      7     15 38.42      1.839 70.65 411.650    151747
+    ## 106  21     7 2025     15     18 38.44      1.709 65.69      NA        NA
 
 Es ist zu sehen, dass der Datensatz aufgrund von verlorenen oder
 nicht-erhobenen Daten lückenhaft ist
@@ -425,7 +424,8 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
     ## 102  27     8 2024     17      9 39.01      1.719 67.06 456    150366
     ## 103   2    12 2024     10     13 37.77      1.719 64.93 474    150840
     ## 104  31    12 2024     18     53 41.32      1.749 72.27 495    151336
-    ## 105  13     3 2025      7     15 38.42      1.839 70.65  NA        NA
+    ## 105  13     3 2025      7     15 38.42      1.839 70.65 412    151747
+    ## 106  21     7 2025     15     18 38.44      1.709 65.69  NA        NA
     ##          Datum Tage Liter.km Euro.km  km.Tag Liter.Tag Euro.Tag
     ## 1   2014-06-20   25   0.0909  0.1363  17.608    1.6000   2.4000
     ## 2   2014-07-15   38   0.0767  0.1203  13.242    1.0155   1.5934
@@ -531,7 +531,8 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
     ## 102 2024-08-27   97   0.0855  0.1471   4.701    0.4022   0.6913
     ## 103 2024-12-02   29   0.0796  0.1369  16.352    1.3024   2.2390
     ## 104 2024-12-31   72   0.0834  0.1459   6.881    0.5739   1.0037
-    ## 105 2025-03-13   NA       NA      NA      NA        NA       NA
+    ## 105 2025-03-13  130   0.0933  0.1716   3.167    0.2955   0.5435
+    ## 106 2025-07-21   NA       NA      NA      NA        NA       NA
 
 #### Datenstruktur des rekonstruierten Datensatzes
 
@@ -539,7 +540,7 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 str(df.raw)
 ```
 
-    ## 'data.frame':    105 obs. of  17 variables:
+    ## 'data.frame':    106 obs. of  17 variables:
     ##  $ Tag       : int  20 15 22 12 7 8 22 6 8 11 ...
     ##  $ Monat     : int  6 7 8 10 11 12 1 3 3 3 ...
     ##  $ Jahr      : int  2014 2014 2014 2014 2014 2014 2015 2015 2015 2015 ...
@@ -594,7 +595,7 @@ und Posit.Cloud zu Verfügung gestellt.
 
 | Liter | Euro |    km | Tage | Betankungen |
 |------:|-----:|------:|-----:|------------:|
-|  3582 | 5205 | 42954 | 3919 |         104 |
+|  3620 | 5275 | 43366 | 4049 |         105 |
 
 Gesamtsummen seit Juni 2014
 
@@ -622,16 +623,16 @@ In den zwei rechten Spalten sind:
 
 |            | Arith. Mittel | Median | Absolute Differenz | Prozentuale Differenz |
 |:-----------|--------------:|-------:|-------------------:|----------------------:|
-| Liter      |         34.44 |  37.72 |               3.28 |                  8.69 |
-| Euro_Liter |          1.45 |   1.42 |              -0.03 |                 -2.19 |
-| Euro       |         50.04 |  50.84 |               0.80 |                  1.58 |
-| km         |        413.02 | 448.50 |              35.48 |                  7.91 |
-| Tage       |         37.68 |  31.50 |              -6.18 |                -19.63 |
-| Liter.km   |          0.08 |   0.08 |               0.00 |                  0.84 |
-| Euro.km    |          0.12 |   0.11 |              -0.01 |                 -6.88 |
-| km.Tag     |         10.96 |  14.24 |               3.28 |                 23.02 |
-| Liter.Tag  |          0.91 |   1.20 |               0.28 |                 23.67 |
-| Euro.Tag   |          1.33 |   1.61 |               0.29 |                 17.72 |
+| Liter      |         34.48 |  37.72 |               3.24 |                  8.60 |
+| Euro_Liter |          1.45 |   1.42 |              -0.03 |                 -2.45 |
+| Euro       |         50.24 |  50.87 |               0.63 |                  1.24 |
+| km         |        413.01 | 448.00 |              34.99 |                  7.81 |
+| Tage       |         38.56 |  32.00 |              -6.56 |                -20.51 |
+| Liter.km   |          0.08 |   0.08 |               0.00 |                  0.85 |
+| Euro.km    |          0.12 |   0.11 |              -0.01 |                 -7.13 |
+| km.Tag     |         10.71 |  14.00 |               3.29 |                 23.50 |
+| Liter.Tag  |          0.89 |   1.18 |               0.28 |                 24.15 |
+| Euro.Tag   |          1.30 |   1.59 |               0.29 |                 18.04 |
 
 Gesamtmittel
 
@@ -652,6 +653,7 @@ Gesamtmittel
 | 2022 |   157 |  292 | 1994 |           4 |
 | 2023 |   235 |  433 | 2904 |           6 |
 | 2024 |   238 |  427 | 2973 |           6 |
+| 2025 |    38 |   71 |  412 |           1 |
 
 Jahressummen
 
@@ -685,24 +687,26 @@ Jahressummen
 | 2022 | 39.25 | 1.87 | 73.08 | 498.50 | 89.50 | 0.08 | 0.15 | 0.82 | 0.44 | 0.82 |
 | 2023 | 39.09 | 1.84 | 72.10 | 484.00 | 64.33 | 0.08 | 0.15 | 1.12 | 0.61 | 1.12 |
 | 2024 | 39.66 | 1.79 | 71.20 | 495.50 | 62.50 | 0.08 | 0.14 | 1.14 | 0.63 | 1.14 |
+| 2025 | 38.42 | 1.84 | 70.65 | 412.00 | 130.00 | 0.09 | 0.17 | 0.54 | 0.30 | 0.54 |
 
 Jahresmittel (arithmetrisch)
 
 #### Mediane
 
-|      | Liter | Euro/Liter |  Euro |    km | Tage | Liter/km | Euro/km | km/Tag | Liter/Tag | Euro/Tag |
-|:-----|------:|-----------:|------:|------:|-----:|---------:|--------:|-------:|----------:|---------:|
-| 2014 | 38.48 |       1.49 | 57.59 | 451.5 | 34.5 |     0.09 |    0.13 |   1.67 |      1.12 |     1.67 |
-| 2015 | 37.47 |       1.42 | 50.51 | 451.0 | 24.0 |     0.08 |    0.11 |   2.10 |      1.56 |     2.10 |
-| 2016 | 37.47 |       1.29 | 48.54 | 449.0 | 19.0 |     0.08 |    0.11 |   2.55 |      1.97 |     2.55 |
-| 2017 | 38.53 |       1.32 | 50.44 | 436.0 | 31.0 |     0.09 |    0.12 |   1.63 |      1.24 |     1.63 |
-| 2018 | 26.54 |       1.46 | 38.72 | 219.0 | 19.0 |     0.12 |    0.18 |   2.04 |      1.40 |     2.04 |
-| 2019 | 36.91 |       1.42 | 51.55 | 396.0 | 38.0 |     0.09 |    0.13 |   1.36 |      0.97 |     1.36 |
-| 2020 | 37.17 |       1.31 | 47.93 | 452.5 | 56.5 |     0.08 |    0.11 |   0.85 |      0.66 |     0.85 |
-| 2021 | 38.50 |       1.61 | 63.01 | 491.0 | 57.0 |     0.08 |    0.13 |   1.11 |      0.68 |     1.11 |
-| 2022 | 39.25 |       1.85 | 72.68 | 503.5 | 83.5 |     0.08 |    0.14 |   0.87 |      0.47 |     0.87 |
-| 2023 | 38.84 |       1.86 | 72.44 | 483.5 | 66.0 |     0.08 |    0.15 |   1.10 |      0.59 |     1.10 |
-| 2024 | 39.52 |       1.77 | 70.98 | 484.5 | 55.0 |     0.08 |    0.15 |   1.29 |      0.72 |     1.29 |
+|      | Liter | Euro/Liter |  Euro |    km |  Tage | Liter/km | Euro/km | km/Tag | Liter/Tag | Euro/Tag |
+|:-----|------:|-----------:|------:|------:|------:|---------:|--------:|-------:|----------:|---------:|
+| 2014 | 38.48 |       1.49 | 57.59 | 451.5 |  34.5 |     0.09 |    0.13 |   1.67 |      1.12 |     1.67 |
+| 2015 | 37.47 |       1.42 | 50.51 | 451.0 |  24.0 |     0.08 |    0.11 |   2.10 |      1.56 |     2.10 |
+| 2016 | 37.47 |       1.29 | 48.54 | 449.0 |  19.0 |     0.08 |    0.11 |   2.55 |      1.97 |     2.55 |
+| 2017 | 38.53 |       1.32 | 50.44 | 436.0 |  31.0 |     0.09 |    0.12 |   1.63 |      1.24 |     1.63 |
+| 2018 | 26.54 |       1.46 | 38.72 | 219.0 |  19.0 |     0.12 |    0.18 |   2.04 |      1.40 |     2.04 |
+| 2019 | 36.91 |       1.42 | 51.55 | 396.0 |  38.0 |     0.09 |    0.13 |   1.36 |      0.97 |     1.36 |
+| 2020 | 37.17 |       1.31 | 47.93 | 452.5 |  56.5 |     0.08 |    0.11 |   0.85 |      0.66 |     0.85 |
+| 2021 | 38.50 |       1.61 | 63.01 | 491.0 |  57.0 |     0.08 |    0.13 |   1.11 |      0.68 |     1.11 |
+| 2022 | 39.25 |       1.85 | 72.68 | 503.5 |  83.5 |     0.08 |    0.14 |   0.87 |      0.47 |     0.87 |
+| 2023 | 38.84 |       1.86 | 72.44 | 483.5 |  66.0 |     0.08 |    0.15 |   1.10 |      0.59 |     1.10 |
+| 2024 | 39.52 |       1.77 | 70.98 | 484.5 |  55.0 |     0.08 |    0.15 |   1.29 |      0.72 |     1.29 |
+| 2025 | 38.42 |       1.84 | 70.65 | 412.0 | 130.0 |     0.09 |    0.17 |   0.54 |      0.30 |     0.54 |
 
 Jahresmittel (median)
 
@@ -721,6 +725,7 @@ Jahresmittel (median)
 | 2022 | 0.00 | -0.01 | -0.39 | 5.00 | -6.00 | 0.00 | 0.00 | 0.05 | 0.03 | 0.05 |
 | 2023 | -0.25 | 0.01 | 0.33 | -0.50 | 1.67 | 0.00 | 0.00 | -0.02 | -0.02 | -0.02 |
 | 2024 | -0.15 | -0.02 | -0.22 | -11.00 | -7.50 | 0.00 | 0.00 | 0.15 | 0.08 | 0.15 |
+| 2025 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
 
 Absolute Differenz Median - Arith. Mittel
 
@@ -739,6 +744,7 @@ Absolute Differenz Median - Arith. Mittel
 | 2022 | -0.01 | -0.67 | -0.54 | 0.99 | -7.19 | -1.02 | -1.55 | 6.20 | 6.69 | 6.20 |
 | 2023 | -0.66 | 0.81 | 0.46 | -0.10 | 2.53 | -0.55 | 0.56 | -2.12 | -3.26 | -2.12 |
 | 2024 | -0.37 | -1.13 | -0.31 | -2.27 | -13.64 | 1.86 | 1.91 | 11.72 | 11.67 | 11.72 |
+| 2025 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
 
 Relative Differenz Median - Arith. Mittel in Prozent
 
@@ -756,9 +762,9 @@ library(tidyverse)
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+    ## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
     ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.4     
+    ## ✔ purrr     1.1.0     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -861,7 +867,7 @@ Zunächst wird ein Blick auf die akkumulierten Werte geworfen.
 
 | Liter | Euro |    km | Tage | Betankungen |
 |------:|-----:|------:|-----:|------------:|
-|  3582 | 5205 | 42954 | 3919 |         104 |
+|  3620 | 5275 | 43366 | 4049 |         105 |
 
 Gesamtsummen seit Juni 2014
 
@@ -949,13 +955,14 @@ große Rückgang zwischen 2018 und 2019 erfolgte.
 
 ### Export
 
-Im grundlegenden R-Skript werden folgende Exporte ausgeführt:
+*Im grundlegenden R-Skript werden folgende Exporte ausgeführt*:
 
-- Der Rekonstruierte Datensatz
-- Gesamtsummen und -mittel
-- Jahressummen und -mittel
-- <b>TBD:</b> SQLite (öffentlich)
-- <b>TBD:</b> postgreSQL (persönlich)
+Rekonstruierter Datensatz: - Semi-strukturiert: TSV (auch in einer
+Englischen Version) - Strukturiert: XML, JSON - Binär: RDS, Parquet -
+Datenbank: postgreSQL, SQLite
+
+Beschreibende Statistiken (TSV): - Gesamtsummen und -mittel -
+Jahressummen und -mittel
 
 Diese Exporte und der dazugehörige Code sind kein Teil dieses Dokuments
 und stehen auf GitHub und Posit.Cloud zur Verfügung.
