@@ -6,7 +6,7 @@
 # B.R.Dutkiewicz                                     #
 #----------------------------------------------------#
 
-# Letzte wesentliche Änderung: 24.07.2025
+# Letzte wesentliche Änderung: 25.07.2025
 # Verwendete Version: R 4.5.1
 
 # Arbeitsverzeichnis festgelegt?
@@ -143,18 +143,46 @@ df.raw$Euro.Tag <- round(df.raw$Euro.Tag, 4)
 ## Varianten erzeugen #----
 ##--------------------#
 
+## Technische Daten
+# Deutsch (für Textdatei-Export)
+head <- "Corolla_Betankungen_reconstructed
+B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
+Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
+UT164AEB103030101
+Aufbereitete Daten"
+
+# Englisch (für Textdatei-Export)
+head.en <- "Corolla_refuelellings_reconstructed
+B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
+Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 6000rpm 195kphmax 1587cm3 40 liter tank
+UT164AEB103030101
+Reconstructed Data"
+
+# Technische Daten (für SQL-Exporte)
+technische_daten <- c("marke", "modell", "baujahr", "kraftstoff", "gewicht_kg", "leistung_kw", "Umin", "geschwindigkeit_kmh", "hubraum_cm2", "fassungsvermögen_L", "fahrgestellnummer")
+technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg", "power_kw", "rpm", "speed_kph", "displacement_ccm", "capacity_L", "chassis_number")
+value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
+car_data <- data.frame(technische_daten, technical_data, value)
+
+
 ## Aufbereiteter Datensatz inkl. unv. jüngster Beobachtung für den Export
 df.export <- df.raw
-
 # In Spaltennamen Punkt durch Unterstrich ersetzen
 names(df.export) <- gsub(x = names(df.export), pattern = "\\.", replacement = "_")
 #Punkte in Spaltennamen sind in R üblich, jedoch in anderen Werkzeugen wie Python problematisch.
 
 
+## Englische Version
+df.export.en <- df.export
+names(df.export.en) <- c("day", "month", "year", "hour", "minute", "liter", "euro_liter", "euro", "km", "km_total", "date", "days", "liter_km", "euro_km", "km_day", "liter_day", "euro_day")
+
+
 ## Aufbereiteter Datensatz exkl. unv. jüngster Beobachtung für die weitere Auswertung
 df.raw <- df.raw[-nrow(df.raw), ]
 df <- df.raw
-rm(df.raw)
+
+# Entfernen aller ab hier unnötigen Objekte
+rm(technische_daten, technical_data, value, df.raw)
 
 
 
@@ -926,13 +954,6 @@ save(df.export, file = "Output_Data\\Corolla_Betankungen_reconstructed.RDS")
 ###-----------#
 
 ## Aufbereitete Daten
-# Information zum Datensatz
-head <- "Corolla_Betankungen_reconstructed
-B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
-Toyota Corolla Bj.1998 Benzin 920kg 81kw 6000U/min 195kmhmax 1587cm3 40L-Tank
-UT164AEB103030101
-Aufbereitete Daten"
-
 # Export als Funktion definieren
 ExportDataFrameDEU <- function(filename = "Output_Data\\Corolla_Betankungen_reconstructed.txt"){
   # Verbindung öffnen
@@ -952,17 +973,6 @@ ExportDataFrameDEU()
 
 
 ## Englische Version
-# Information zum Datensatz
-head.en <- "Corolla_refuelellings_reconstructed
-B.R.Dutkiewicz (https://github.com/bartdutkiewicz/Tankstatistik)
-Toyota Corolla year of manufacture 1998 gasoline 920kg 81kw 6000rpm 195kphmax 1587cm3 40 liter tank
-UT164AEB103030101
-Reconstructed Data"
-
-# Englische Spaltennamen
-df.export.en <- df.export
-names(df.export.en) <- c("day", "month", "year", "hour", "minute", "liter", "euro_liter", "euro", "km", "km_total", "date", "days", "liter_km", "euro_km", "km_day", "liter_day", "euro_day")
-
 # Export als Funktion definieren
 ExportDataFrameENG <- function(filename = "Output_Data\\Corolla_refuellings_reconstructed.txt"){
   conn <- file(filename, open = "wt")
@@ -975,9 +985,6 @@ ExportDataFrameENG <- function(filename = "Output_Data\\Corolla_refuellings_reco
 
 # Funktion aufrufen
 ExportDataFrameENG()
-
-# Entfernen aller ab hier unnötigen Objekte
-rm(head, head.en)
 
 
 
@@ -995,14 +1002,6 @@ rm(head, head.en)
 
 ## Paket laden
 library(RSQLite)
-
-## Technische Daten
-# Tabelle
-technische_daten <- c("marke", "modell", "baujahr", "kraftstoff", "gewicht_kg", "leistung_kw", "Umin", "geschwindigkeit_kmh", "hubraum_cm2", "fassungsvermögen_L", "fahrgestellnummer")
-technical_data <- c("brand", "model", "year_of_manufacture", "fuel", "weight_kg", "power_kw", "rpm", "speed_kph", "displacement_ccm", "capacity_L", "chassis_number")
-value <- c("Toyota", "Corolla", "1998", "Benzin_Gasoline", "920", "81", "195", "1587", "6000", "40", "UT164AEB103030101")
-car_data <- data.frame(technische_daten, technical_data, value)
-
 
 # Export als Funktion definieren
 ExportDataFrameSQLite <- function(df.to.write,
@@ -1027,10 +1026,6 @@ ExportDataFrameSQLite(df.export, "corolla_betankungen_reconstructed")
 
 # Aufbereitete Daten Englisch in DB laden
 ExportDataFrameSQLite(df.export.en, "corolla_refuellings_reconstructed")
-
-
-## Entfernen aller ab hier unnötigen Objekte
-rm(technische_daten, technical_data, value, car_data)
 
 
 
@@ -1089,11 +1084,16 @@ write_parquet(df.export, "Output_Data\\Corolla_Betankungen_reconstructed.parquet
 ## Auswertungen #----
 ##--------------#
 
-write.table(Summen, "Output_Files\\Tankstatistik_Gesamtsummen.txt")
-write.table(Mittel, "Output_Files\\Tankstatistik_Mittel.txt")
-write.table(Summen.Jahr, "Output_Files\\Tankstatistik_Jahressummen.txt")
-write.table(Mittel.Jahr.a, "Output_Files\\Tankstatistik_Jahresmittel_arithmetrisch.txt")
-write.table(Mittel.Jahr.m, "Output_Files\\Tankstatistik_Jahresmittel_median.txt")
+# Funktionsdefinition und -aufruf
+ExportSummaryStatistics <- function(){
+  write.table(Summen, "Output_Files\\Tankstatistik_Gesamtsummen.txt")
+  write.table(Mittel, "Output_Files\\Tankstatistik_Mittel.txt")
+  write.table(Summen.Jahr, "Output_Files\\Tankstatistik_Jahressummen.txt")
+  write.table(Mittel.Jahr.a, "Output_Files\\Tankstatistik_Jahresmittel_arithmetrisch.txt")
+  write.table(Mittel.Jahr.m, "Output_Files\\Tankstatistik_Jahresmittel_median.txt")
+  }
+
+ExportSummaryStatistics()
 
 
 
