@@ -414,31 +414,6 @@ Mittel.diff.Jahr.rel <- ((Mittel.Jahr.m - Mittel.Jahr.a)/Mittel.Jahr.m) * 100
 
 
 
-##--------------------#
-## Ausgabe Auswertung #----
-##--------------------#
-
-## Gesamter Zeitraum
-# Zusammenfassung aller Summen, Mittelwerte und Quotienten des Gesamtzeitraumes
-print(Summen)
-print(Mittel)
-
-## Jahreswerte
-# Zusammenfassung der Jahressummen
-print(Summen.Jahr)
-
-# Zusammenfassung der Jahresmittelwerte und -quotienten (arithmetrisch)
-print(Mittel.Jahr.a)
-
-# Zusammenfassung der Jahresmittelwerte und -quotienten (median)
-print(Mittel.Jahr.m)
-
-# Vergleich beider Mittel, absolut und relativ
-print(Mittel.diff.Jahr.abs)
-print(Mittel.diff.Jahr.rel)
-
-
-
 #-------------#
 # Abbildungen #----
 #-------------#
