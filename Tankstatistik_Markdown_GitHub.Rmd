@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In diesem Projekt wird die Tankstatistik eines Toyota Corolla Bj. 1998 seit 2014 fortlaufend ausgewertet. Das Auto wird durch den Urheber dieser Auswertung überwiegend innerhalb der Region Stuttgart bewegt und an städischen Tankstellen betankt (in sehr seltenen Fällen an der Autobahn).
 
-Dieses Projekt ist <b>Work-In-Progress</b> und der Datensatz wird laufend ergänzt.</b> Die verwendete Version von R ist 4.5.1.
+Dieses Projekt ist <b>Work-In-Progress</b> und der Datensatz wird laufend ergänzt.</b> Die verwendete Version von R ist 4.5.2.
 
 
 <b>Bei dem Auto handelt es sich um:</b>

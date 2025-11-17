@@ -1,6 +1,6 @@
 "x"
-"Liter" 3620.08
-"Euro" 5275.19
-"km" 43366
-"Tage" 4049
-"Betankungen" 105
+"Liter" 3743
+"Euro" 5484.44
+"km" 44840
+"Tage" 4168
+"Betankungen" 109
