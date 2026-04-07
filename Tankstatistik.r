@@ -7,7 +7,8 @@
 #----------------------------------------------------#
 
 # Letzte wesentliche Änderung: 25.07.2025
-# Verwendete Version: R 4.5.2
+# Letzte Änderung: 07.04.2026
+# Verwendete Version: R 4.5.3
 
 # Arbeitsverzeichnis festgelegt?
 getwd()
@@ -490,7 +491,11 @@ Abb.Betankungen.Jahr <- ggplot(data = Summen.Jahr) +
             size = 5,
             #fontface = "bold",
             nudge_y = 1) +
-  annotate(geom = "text", x = 2014, y = 8, label = "(ab Juni)", hjust = "center")
+  annotate(geom = "text",
+           x = 2014, y = 9,
+           size = 3,
+           label = "(ab Juni)",
+           hjust = "center")
 Abb.Betankungen.Jahr
 
 # Kilometer je Jahr
@@ -518,8 +523,12 @@ Abb.Kilometer.Jahr <- ggplot(data = Summen.Jahr) +
                 y = Kilometer.Jahr,
                 label = Kilometer.Jahr),
             size = 5,
-            nudge_y = 300) +
-  annotate(geom = "text", x = 2014, y = 3500, label = "(ab Juni)", hjust = "center")
+            nudge_y = 400) +
+  annotate(geom = "text",
+           x = 2014, y = 3700,
+           size = 3,
+           label = "(ab Juni)",
+           hjust = "center")
 Abb.Kilometer.Jahr
 
 # Verbrauch je Jahr
@@ -547,8 +556,12 @@ Abb.Gesamtverbrauch.Jahr <- ggplot(data = Summen.Jahr) +
                 y = Gesamtverbrauch.Jahr,
                 label = Gesamtverbrauch.Jahr),
             size = 5,
-            nudge_y = 20) +
-  annotate(geom = "text", x = 2014, y = 300, label = "(ab Juni)", hjust = "center")
+            nudge_y = 30) +
+  annotate(geom = "text",
+           x = 2014, y = 325,
+           size = 3,
+           label = "(ab Juni)",
+           hjust = "center")
 Abb.Gesamtverbrauch.Jahr
 
 # Ausgaben je Jahr
@@ -576,8 +589,12 @@ Abb.Gesamtausgaben.Jahr <- ggplot(data = Summen.Jahr) +
                 y = Gesamtausgaben.Jahr,
                 label = Gesamtausgaben.Jahr),
             size = 5,
-            nudge_y = 20) +
-  annotate(geom = "text", x = 2014, y = 420, label = "(ab Juni)", hjust = "center")
+            nudge_y = 40) +
+  annotate(geom = "text",
+           x = 2014, y = 450,
+           size = 3,
+           label = "(ab Juni)",
+           hjust = "center")
 Abb.Gesamtausgaben.Jahr
 
 
@@ -603,7 +620,10 @@ Abb.Liter <- ggplot(data = df,
   geom_line() +
   geom_point(size = 1) +
   geom_hline(yintercept = 40, color = "red") +
-  annotate(geom = "text", x = as.Date("2016-04-16"), y = 42, label = "max. Fassungsvermögen", hjust = "center")
+  annotate(geom = "text",
+           x = as.Date("2016-04-16"), y = 43,
+           label = "max. Fassungsvermögen",
+           hjust = "center")
 Abb.Liter
 
 # Verlauf der Literpreise
@@ -616,7 +636,7 @@ Abb.Literpreise <- ggplot(data = df,
   theme(axis.title.y = element_text(face = "bold", size = 15)) +
   theme(axis.text.y = element_text(face = "bold", vjust = 0.3)) +
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 2.2)) +
+                     limits = c(0, 2.5)) +
   labs(x = "Jahr",
        y = "Euro",
        title = "Literpreis für E95") +
@@ -640,8 +660,10 @@ Abb.Kilometer <- ggplot(data = df,
        title = "Gefahrene Kilometer je Betankung") +
   geom_line() +
   geom_point(size = 1) +
-  annotate(geom = "text", x = as.Date("2016-04-16") + 10, y = 920,
-           label = "Ausreißer, Plausibilität zweifelhaft", hjust = "left")
+  annotate(geom = "text",
+           x = as.Date("2016-04-16") + 10, y = 920,
+           label = "Ausreißer, Plausibilität zweifelhaft",
+           hjust = "left")
 Abb.Kilometer
 
 # Gefahrene Kilometer je getanktem Liter
@@ -660,8 +682,10 @@ Abb.Kilometer.Liter <- ggplot(data = df,
        title = "Gefahrene Kilometer je getanktem Liter") +
   geom_line() +
   geom_point(size = 1) +
-  annotate(geom = "text", x = as.Date("2016-04-16"), y = 32,
-           label = "Ausreißer, Plausibilität zweifelhaft", hjust = "left")
+  annotate(geom = "text",
+           x = as.Date("2016-04-16"), y = 32,
+           label = "Ausreißer, Plausibilität zweifelhaft",
+           hjust = "left")
 Abb.Kilometer.Liter
 
 # Verbrauchte Liter je 100 Kilometer
@@ -680,13 +704,13 @@ Abb.Liter.100km <- ggplot(data = df,
        title = "Verbrauchte Liter je 100 Kilometer") +
   geom_line() +
   geom_point(size = 1) +
-  annotate(geom = "text", x = as.Date("2016-04-16"), y = 32,
-           label = "Ausreißer, Plausibilität zweifelhaft", hjust = "left")
+  annotate(geom = "text",
+           x = as.Date("2016-04-16"), y = 32,
+           label = "Ausreißer, Plausibilität zweifelhaft",
+           hjust = "left")
 Abb.Liter.100km
 
-
 # TBD: Kilometer je Tag und zeitlicher Abstand zur nächsten Betankung
-
 
 # TBD: Reichweite je Tank + Farbskala Abstand je Betankung
 
@@ -716,7 +740,10 @@ Abb.Liter.Jahr <- ggplot(data = Mittel.Jahr) +
   geom_bar(mapping = (aes(x = Jahr, y = Liter.Tank.Jahr, fill = Mittel)),
            stat = "identity",  position = position_dodge()) +
   geom_hline(yintercept = 40, color = "red") +
-  annotate(geom = "text", x = 2016, y = 42, label = "max. Fassungsvermögen", hjust = "center")
+  annotate(geom = "text",
+           x = 2016, y = 42,
+           label = "max. Fassungsvermögen",
+           hjust = "center")
 Abb.Liter.Jahr
 
 # Literpreis
@@ -858,7 +885,7 @@ Abb.KM.Tag.Jahr <- ggplot(data = Mittel.Jahr) +
   scale_x_continuous(expand = c(0, 0.25),
                      breaks = Mittel.Jahr$Jahr) +
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 3)) +
+                     limits = c(0, 5)) +
   labs(x = "Jahr",
        y = "Kilometer/Tag",
        title = "Zurückgelegte Kilometer je Tag") +
@@ -879,7 +906,7 @@ Abb.Liter.Tag.Jahr <- ggplot(data = Mittel.Jahr) +
   scale_x_continuous(expand = c(0, 0.25),
                      breaks = Mittel.Jahr$Jahr) +
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 2.5)) +
+                     limits = c(0, 3)) +
   labs(x = "Jahr",
        y = "Liter/Tag",
        title = "Verbrauchte Liter je Tag") +
@@ -900,7 +927,7 @@ Abb.Euro.Tag.Jahr <- ggplot(data = Mittel.Jahr) +
   scale_x_continuous(expand = c(0, 0.25),
                      breaks = Mittel.Jahr$Jahr) +
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 3)) +
+                     limits = c(0, 5)) +
   labs(x = "Jahr",
        y = "Euro/Tag",
        title = "Kosten je Tag") +

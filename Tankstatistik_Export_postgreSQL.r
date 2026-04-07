@@ -10,7 +10,7 @@
 #----------------------------------------------------#
 
 # Letzte wesentliche Änderung: 24.07.2025
-# Verwendete Version: R 4.5.2
+# Verwendete Version: R 4.5.3
 
 # Arbeitsverzeichnis festgelegt?
 getwd()
